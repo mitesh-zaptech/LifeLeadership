@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="SELECT SPEAKER"
+                    android:text="SPEAKER SEARCH"
                     android:textColor="#fff"
                     android:textSize="20sp" />
             </RelativeLayout>
@@ -89,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="SELECT SUBJECT"
+                    android:text="SUBJECT SEARCH"
                     android:textColor="#fff"
                     android:textSize="20sp" />
             </RelativeLayout>
@@ -148,6 +148,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:text="Shuffle"
+                        android:textColor="#D22129"
                         android:textSize="20sp" />
                 </RelativeLayout>
 
@@ -383,7 +384,7 @@
     <RelativeLayout
         android:id="@+id/bottom"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="350dp"
         android:layout_alignParentBottom="true"
         android:background="@drawable/bg"
         android:visibility="gone" >
@@ -412,7 +413,7 @@
         <bipin.wheel.widget.WheelView
             android:id="@+id/wheel1"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="300dp"
             android:layout_alignParentBottom="true"
             android:layout_margin="5dp" />
     </RelativeLayout>
@@ -421,8 +422,8 @@
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="3dp"
         android:scaleType="fitCenter"
         android:src="@drawable/rascal" />
 

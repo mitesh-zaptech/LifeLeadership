@@ -10,6 +10,7 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,7 +34,7 @@ public class LoginActivity extends BaseActivity {
 	Button btnSubmit;
 	EditText editUsername, editPass;
 	ToggleButton btnRememberOnOff;
-	TextView txtForgotpass;
+	TextView txtForgotpass,txtlogin;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class LoginActivity extends BaseActivity {
 		btnSubmit = (Button) findViewById(R.id.btnSubmitLogin);
 		btnRememberOnOff = (ToggleButton) findViewById(R.id.toggleButtonRememberButton);
 		txtForgotpass = (TextView) findViewById(R.id.forgotpass);
+		txtlogin = (TextView) findViewById(R.id.textViewLoginTitle);
 
 		Log.i("remember", "" + LLApplication.getRemember());
 		if (LLApplication.getRemember() == 0) {
@@ -66,10 +68,10 @@ public class LoginActivity extends BaseActivity {
 			editPass.setText("" + LLApplication.getPassword());
 		}
 
-		/*
-		 * editUsername.setText("orrin.woodward");
-		 * editPass.setText("Hebrews111");
-		 */
+		Typeface typeFace1 = Typeface.createFromAsset(getAssets(), "dsdigi.ttf");
+		Typeface typeFace2 = Typeface.createFromAsset(getAssets(),
+				"times_reg.ttf");
+		txtlogin.setTypeface(typeFace2);
 	}
 
 	private void clickEvents() {

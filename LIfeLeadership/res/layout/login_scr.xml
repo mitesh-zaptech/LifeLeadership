@@ -10,7 +10,8 @@
         android:layout_height="55dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="#FFFFFF" >
+        android:background="#FFFFFF"
+        android:visibility="visible" >
 
         <View
             android:id="@+id/view2"
@@ -27,7 +28,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="15dp"
-        android:src="@drawable/logo" />
+        android:src="@drawable/logo"
+        android:visibility="visible" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,15 +62,16 @@
             <EditText
                 android:id="@+id/editTextUserName"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="40dp"
                 android:layout_below="@+id/textViewLoginTitle"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="30dp"
                 android:background="@android:drawable/editbox_dropdown_light_frame"
                 android:ems="10"
                 android:gravity="center_vertical"
+                android:hint="Life Username"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:singleLine="true" >
@@ -79,7 +82,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_alignLeft="@+id/editTextUserName"
-                android:layout_below="@+id/editTextUserName" >
+                android:layout_below="@+id/editTextUserName"
+                android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/textView1"
@@ -104,7 +108,7 @@
             <EditText
                 android:id="@+id/editTextPassword"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="40dp"
                 android:layout_below="@+id/layout1"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="15dp"
@@ -113,6 +117,7 @@
                 android:background="@android:drawable/editbox_dropdown_light_frame"
                 android:ems="10"
                 android:gravity="center_vertical"
+                android:hint="Password"
                 android:inputType="textPassword"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -124,7 +129,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_alignLeft="@+id/editTextUserName"
-                android:layout_below="@+id/editTextPassword" >
+                android:layout_below="@+id/editTextPassword"
+                android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/textView2"
@@ -149,7 +155,8 @@
                 android:id="@+id/layout3"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_below="@+id/layout2" >
+                android:layout_below="@+id/layout2"
+                android:visibility="visible" >
 
                 <TextView
                     android:id="@+id/textViewRememberTitle"
@@ -184,7 +191,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/layout3"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/submit_btn" />
 
             <TextView
@@ -193,8 +200,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/btnSubmitLogin"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="15dp"
-                android:text="FORGOT PASSWORD ?"
+                android:layout_marginTop="20dp"
+                android:text="FORGOT USERNAME OR PASSWORD ?"
                 android:textColor="#fff"
                 android:textSize="15sp" />
         </RelativeLayout>
@@ -210,6 +217,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/life_listin" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
     </LinearLayout>
 
     <ImageView
@@ -219,6 +231,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/rascal" />
+        android:src="@drawable/rascal"
+        android:visibility="visible" />
 
 </RelativeLayout>

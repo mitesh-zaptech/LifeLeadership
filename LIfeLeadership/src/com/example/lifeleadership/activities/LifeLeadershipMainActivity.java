@@ -126,7 +126,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	private boolean booleanScrolling = false;
 	WheelView wheelSelectSpeaker;
 	int curPoswheel1 = 0, curPoswheel2 = 0, curSelectedwheel = 0;
-	String[] array1 = new String[] { "SELECT SPEAKER", "Dr. Tom Ascol",
+	String[] array1 = new String[] { "SPEAKER SEARCH", "Dr. Tom Ascol",
 			"Kirk Birtles", "Chris Brady", "Terri Brady", "Larry Van Buskirk",
 			"Stephen Davey", "Oliver DeMille", "George Guzzardo",
 			"Claude Hamilton", "Ken Hamm", "Dan Hawkins", "Bill Lewis",
@@ -134,7 +134,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			"Orrin Woodward" };
 	String[] ids1 = { "0", "54", "11", "3", "15", "53", "26", "12", "7", "4",
 			"55", "6", "30", "14", "16", "18", "17", "13" };
-	String[] array2 = new String[] { "SELECT SUBJECT", "Faith", "Family",
+	String[] array2 = new String[] { "SUBJECT SEARCH", "Faith", "Family",
 			"Finances", "Fitness", "Fun", "Following", "Freedom", "Friends" };
 	String[] ids2 = { "0", "32", "33", "34", "35", "39", "36", "37", "38" };
 	ArrayList<HashMap<String, String>> arrayofspeakers = new ArrayList<HashMap<String, String>>();
@@ -1347,18 +1347,18 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					String spkr = txtSpeakerSearch.getText().toString();
 					String subj = txtSubjectSearch.getText().toString();
 
-					if (spkr.equals("SELECT SPEAKER")
-							&& subj.equals("SELECT SUBJECT")) {
+					if (spkr.equals("SPEAKER SEARCH")
+							&& subj.equals("SUBJECT SEARCH")) {
 						txtStationname.setText("Shuffle");
 					} else {
 						if (booleanFlagText) {
 							booleanFlagText = false;
-							if (spkr.equals("SELECT SPEAKER"))
+							if (spkr.equals("SPEAKER SEARCH"))
 								spkr = subj;
 							txtStationname.setText("" + spkr);
 						} else {
 							booleanFlagText = true;
-							if (subj.equals("SELECT SUBJECT"))
+							if (subj.equals("SUBJECT SEARCH"))
 								subj = spkr;
 							txtStationname.setText("" + subj);
 						}
