@@ -18,14 +18,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -877,6 +878,17 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 											.get(currentStationPos)
 											.get("FileName") + ".mp3");
 						}
+					}else {
+						String strMsg= "I’m sorry but that station is unavailable at this time";
+						AlertDialog.Builder alert = new AlertDialog.Builder(LifeLeadershipMainActivity.this);
+						alert.setTitle("Alert");
+						alert.setMessage(strMsg);
+						alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int whichButton) {
+								dialog.dismiss();
+							}
+						});
+						alert.show();
 					}
 				}
 			}
