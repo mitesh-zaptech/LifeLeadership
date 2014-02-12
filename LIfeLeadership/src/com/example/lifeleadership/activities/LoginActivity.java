@@ -2,7 +2,6 @@ package com.example.lifeleadership.activities;
 
 import java.util.HashMap;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,6 +67,7 @@ public class LoginActivity extends BaseActivity {
 			editPass.setText("" + LLApplication.getPassword());
 		}
 
+		@SuppressWarnings("unused")
 		Typeface typeFace1 = Typeface.createFromAsset(getAssets(), "dsdigi.ttf");
 		Typeface typeFace2 = Typeface.createFromAsset(getAssets(),
 				"times_reg.ttf");

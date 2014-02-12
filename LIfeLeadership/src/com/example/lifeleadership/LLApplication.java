@@ -5,13 +5,24 @@ import java.util.HashMap;
 
 import android.app.Application;
 
-public class LLApplication extends Application{
-	
-	public static String username="";
-	public static String password="";
+public class LLApplication extends Application {
+
+	public static int skipcount;
+
+	public static String username = "";
+	public static String password = "";
 	public static String Guid;
-	public static int remember=0;
-	public static int userloggedin=0;
+	public static int remember = 0;
+	public static int userloggedin = 0;
+
+	public static int getSkipcount() {
+		return skipcount;
+	}
+
+	public static void setSkipcount(int skipcount) {
+		LLApplication.skipcount = skipcount;
+	}
+
 	public static int getUserloggedin() {
 		return userloggedin;
 	}
@@ -20,13 +31,13 @@ public class LLApplication extends Application{
 		LLApplication.userloggedin = userloggedin;
 	}
 
-	public static ArrayList<HashMap<String, String>> stationLists=new ArrayList<HashMap<String,String>>();
+	public static ArrayList<HashMap<String, String>> stationLists = new ArrayList<HashMap<String, String>>();
 	public static HashMap<String, String> audioInfo = new HashMap<String, String>();
-	public static ArrayList<HashMap<String, String>> favstationLists=new ArrayList<HashMap<String,String>>();
+	public static ArrayList<HashMap<String, String>> favstationLists = new ArrayList<HashMap<String, String>>();
 	public static HashMap<String, String> stationInfo = new HashMap<String, String>();
-	public static String totalTime="";
-	public static ArrayList<HashMap<String, String>> CommercialsLists=new ArrayList<HashMap<String,String>>();
-	
+	public static String totalTime = "";
+	public static ArrayList<HashMap<String, String>> CommercialsLists = new ArrayList<HashMap<String, String>>();
+
 	public static ArrayList<HashMap<String, String>> getCommercialsLists() {
 		return CommercialsLists;
 	}

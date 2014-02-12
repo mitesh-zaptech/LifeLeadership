@@ -18,7 +18,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,7 +25,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -101,8 +99,10 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	RelativeLayout relativeBottom;
 	LinearLayout relativeAppSection4, relativeAppSection3;
 	boolean booleanClicked = false;
-	Button btnPlay, btnLike, btnNext, player_btn1, player_btn2, player_btn3,
+	Button btnPlay, btnLike, player_btn1, player_btn2, player_btn3,
 			player_btn4;
+	RelativeLayout btnNext;
+	TextView txtNext;
 	private StreamingMediaPlayer audioStreamer = null;
 	int currentStationPos = 0;
 	ImageView imgThumb;
@@ -140,6 +140,18 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	String[] ids2 = { "0", "32", "33", "34", "35", "39", "36", "37", "38" };
 	ArrayList<HashMap<String, String>> arrayofspeakers = new ArrayList<HashMap<String, String>>();
 	ArrayList<HashMap<String, String>> arrayofsubjects = new ArrayList<HashMap<String, String>>();
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if (isOnline()) {
+			getSkipCount();
+		} else {
+			Toast.makeText(getApplicationContext(),
+					"" + Constant.network_error, Toast.LENGTH_SHORT).show();
+		}
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -206,7 +218,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				.findViewById(R.id.bottom);
 		btnPlay = (Button) applicationView.findViewById(R.id.play);
 		btnLike = (Button) applicationView.findViewById(R.id.like);
-		btnNext = (Button) applicationView.findViewById(R.id.next);
+		btnNext = (RelativeLayout) applicationView.findViewById(R.id.next);
+		txtNext = (TextView) applicationView.findViewById(R.id.txtNext);
 		player_btn1 = (Button) applicationView.findViewById(R.id.player_btn1);
 		player_btn2 = (Button) applicationView.findViewById(R.id.player_btn2);
 
@@ -578,21 +591,118 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if (LLApplication.getStationLists().size() > currentStationPos) {
-					if (!booleanClicked) {
-						if (currentStationPos != LLApplication
-								.getStationLists().size() - 1) {
-							currentStationPos++;
-							booleanClicked = true;
-							if (isOnline()) {
-								startStreamingAudio(Constant.cdnPath
-										+ LLApplication.getStationLists()
-												.get(currentStationPos)
-												.get("FileName") + ".mp3");
-								playStreaming();
+				if (LLApplication.getSkipcount() > 0) {
+					if (LLApplication.getStationLists().size() > currentStationPos) {
+						if (!booleanClicked) {
+							if (currentStationPos != LLApplication
+									.getStationLists().size() - 1) {
+								currentStationPos++;
+								booleanClicked = true;
+								if (isOnline()) {
+									startStreamingAudio(Constant.cdnPath
+											+ LLApplication.getStationLists()
+													.get(currentStationPos)
+													.get("FileName") + ".mp3");
+									playStreaming();
+									updateSkipCount();
+								}
 							}
 						}
 					}
+				}
+			}
+		});
+	}
+
+	private void getSkipCount() {
+		// TODO Auto-generated method stub
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("func", "getSkipCount");
+
+				String tempResponse = getResponse(map);
+				Log.i("response", "" + tempResponse);
+				Update_getSkipCount(tempResponse);
+			}
+		});
+		t.start();
+	}
+
+	protected void Update_getSkipCount(final String tempResponse) {
+		// TODO Auto-generated method stub
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				if (tempResponse != null) {
+					try {
+						json_str = new JSONObject(tempResponse);
+						int count = json_str.getInt("skipcount");
+						if (count > 0) {
+							LLApplication.setSkipcount(count);
+
+						} else {
+							LLApplication.setSkipcount(0);
+						}
+						txtNext.setText("" + LLApplication.getSkipcount());
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+			}
+		});
+	}
+
+	private void updateSkipCount() {
+		// TODO Auto-generated method stub
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("func", "updateSkipCount");
+
+				String tempResponse = getResponse(map);
+				Log.i("response", "" + tempResponse);
+				Update_getSkipCount(tempResponse);
+			}
+		});
+		t.start();
+	}
+
+	protected void Update_SkipCount(final String tempResponse) {
+		// TODO Auto-generated method stub
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				if (tempResponse != null) {
+					try {
+						json_str = new JSONObject(tempResponse);
+						int count = json_str.getInt("skipcount");
+						if (count > 0) {
+							LLApplication.setSkipcount(count);
+
+						} else {
+							LLApplication.setSkipcount(0);
+						}
+						txtNext.setText("" + LLApplication.getSkipcount());
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 				}
 			}
 		});
@@ -852,7 +962,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					int size = LLApplication.getStationLists().size();
 
 					if (size > 0) {
-						int size_ = LLApplication.getCommercialsLists().size();
+						/*int size_ = LLApplication.getCommercialsLists().size();
 						for (int i = size - 1; i >= 0; i--) {
 							if (i != 0 && i % 4 == 0) {
 								if (currentAdPos == size_)
@@ -863,7 +973,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 												.get(currentAdPos));
 								currentAdPos++;
 							}
-						}
+						}*/
 
 						/*
 						 * size = Common.getStationLists().size();
@@ -878,16 +988,19 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 											.get(currentStationPos)
 											.get("FileName") + ".mp3");
 						}
-					}else {
-						String strMsg= "I’m sorry but that station is unavailable at this time";
-						AlertDialog.Builder alert = new AlertDialog.Builder(LifeLeadershipMainActivity.this);
+					} else {
+						String strMsg = "I’m sorry but that station is unavailable at this time";
+						AlertDialog.Builder alert = new AlertDialog.Builder(
+								LifeLeadershipMainActivity.this);
 						alert.setTitle("Alert");
 						alert.setMessage(strMsg);
-						alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int whichButton) {
-								dialog.dismiss();
-							}
-						});
+						alert.setPositiveButton("OK",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int whichButton) {
+										dialog.dismiss();
+									}
+								});
 						alert.show();
 					}
 				}

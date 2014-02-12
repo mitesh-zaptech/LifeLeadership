@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/relativeTop"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="85dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:background="#FFFFFF"
@@ -16,7 +16,7 @@
         <View
             android:id="@+id/view2"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="15dp"
             android:layout_alignParentBottom="true"
             android:background="#000000" />
     </RelativeLayout>
@@ -234,7 +234,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:scaleType="fitCenter"
         android:src="@drawable/rascal"
         android:visibility="visible" />

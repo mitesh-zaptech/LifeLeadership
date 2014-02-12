@@ -78,6 +78,7 @@ public class RestClient {
 
 				// A Simple JSONObject Parsing
 				JSONArray nameArray=json.names();
+				@SuppressWarnings("unused")
 				JSONArray valArray=json.toJSONArray(nameArray);
 				/*for(int i=0;i<valArray.length();i++)
             {

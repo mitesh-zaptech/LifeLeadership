@@ -8,7 +8,7 @@ package bipin.wheel;
 
 public final class R {
 	public static final class drawable {
-		public static final int wheel_bg = 0x7f020041;
-		public static final int wheel_val = 0x7f020042;
+		public static final int wheel_bg = 0x7f020042;
+		public static final int wheel_val = 0x7f020043;
 	}
 }

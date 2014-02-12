@@ -8,17 +8,24 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginLeft="60dp"
         android:layout_marginRight="10dp" >
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/arrow_white" />
 
         <TextView
             android:id="@+id/lblListItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:textColor="#ff0000"
-            android:layout_toLeftOf="@+id/delete"
+            android:layout_marginLeft="60dp"
             android:layout_marginRight="5dp"
+            android:textColor="#ff0000"
             android:textSize="15sp" />
 
         <Button
@@ -27,7 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/delete_btn" />
+            android:background="@drawable/delete_btn"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </RelativeLayout>

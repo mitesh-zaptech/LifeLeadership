@@ -2,12 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relativeApp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#b8b8b8" >
 
     <RelativeLayout
         android:id="@+id/top"
         android:layout_width="match_parent"
-        android:layout_height="60dp" >
+        android:layout_height="70dp"
+        android:background="#fff" >
 
         <Button
             android:id="@+id/buttonSlide"
@@ -31,7 +33,7 @@
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
+        android:layout_height="15dp"
         android:layout_below="@+id/top"
         android:background="#000000" />
 
@@ -203,15 +205,25 @@
                         android:background="@drawable/playbtn_big_red" >
                     </Button>
 
-                    <Button
+                    <RelativeLayout
                         android:id="@+id/next"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="5dp"
-                        android:background="@drawable/track_new" >
-                    </Button>
+                        android:background="@drawable/track" >
+
+                        <TextView
+                            android:id="@+id/txtNext"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="20dp"
+                            android:text="5"
+                            android:textColor="#D22129"
+                            android:textSize="25sp" />
+                    </RelativeLayout>
                 </RelativeLayout>
 
                 <Button
@@ -425,6 +437,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         android:scaleType="fitCenter"
         android:src="@drawable/rascal" />
 
