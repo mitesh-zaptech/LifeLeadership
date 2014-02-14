@@ -7,29 +7,36 @@
     <RelativeLayout
         android:id="@+id/relativeTop"
         android:layout_width="match_parent"
-        android:layout_height="139dp"
+        android:layout_height="150dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="#FFFFFF"
         android:visibility="visible" >
 
-        <View
-            android:id="@+id/view2"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="19dp"
-            android:layout_alignParentBottom="true"
-            android:background="#000000" />
-    </RelativeLayout>
+            android:layout_height="140dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="#FFFFFF"
+            android:visibility="visible" >
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/rascal"
-        android:visibility="visible" />
+            <View
+                android:id="@+id/view2"
+                android:layout_width="match_parent"
+                android:layout_height="23dp"
+                android:layout_alignParentBottom="true"
+                android:background="#000000" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/rascal"
+            android:visibility="visible" />
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/imageView3"

@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -96,7 +97,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	Button btnSlider, btnRadio;
 	Button btnDone, btnCancel;
 	Animation animBottomToTop, animTopToBottom;
-	RelativeLayout relativeBottom;
+	RelativeLayout relativeBottom, relativeTop;
 	LinearLayout relativeAppSection4, relativeAppSection3;
 	boolean booleanClicked = false;
 	Button btnPlay, btnLike, player_btn1, player_btn2, player_btn3,
@@ -174,12 +175,12 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 		init();
 		onClickEvents();
-		setArray();
+		// setArray();
 
 		CallAsynchronous();
 
 		if (isOnline()) {
-			getCommercials();
+			getSpeakers();
 		} else {
 			Toast.makeText(getApplicationContext(),
 					"" + Constant.network_error, Toast.LENGTH_SHORT).show();
@@ -216,6 +217,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		btnCancel = (Button) applicationView.findViewById(R.id.cancel);
 		relativeBottom = (RelativeLayout) applicationView
 				.findViewById(R.id.bottom);
+		relativeTop = (RelativeLayout) applicationView.findViewById(R.id.top);
 		btnPlay = (Button) applicationView.findViewById(R.id.play);
 		btnLike = (Button) applicationView.findViewById(R.id.like);
 		btnNext = (RelativeLayout) applicationView.findViewById(R.id.next);
@@ -273,6 +275,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			}
 		};
 
+		relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
+		
 		// WebView:
 		webView = (WebView) findViewById(R.id.webview);
 		webView.setBackgroundColor(0x00000000);
@@ -299,9 +303,9 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		 * slideMenuRight();
 		 * 
 		 * curPoswheel1 = 0; curPoswheel2 = 0; txtSpeakerSearch.setText("" +
-		 * arrayofspeakers.get(curPoswheel1).get("name"));
+		 * arrayofspeakers.get(curPoswheel1).get("Name"));
 		 * txtSubjectSearch.setText("" +
-		 * arrayofsubjects.get(curPoswheel2).get("name")); callmyStations(true);
+		 * arrayofsubjects.get(curPoswheel2).get("Name")); callmyStations(true);
 		 * 
 		 * } else if (groupPosition == 3) {
 		 * btnRadio.setVisibility(View.VISIBLE);
@@ -430,11 +434,11 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				if (curSelectedwheel == 0) {
 					curPoswheel1 = wheelSelectSpeaker.getCurrentItem();
 					txtSpeakerSearch.setText(""
-							+ arrayofspeakers.get(curPoswheel1).get("name"));
+							+ arrayofspeakers.get(curPoswheel1).get("Name"));
 				} else {
 					curPoswheel2 = wheelSelectSpeaker.getCurrentItem();
 					txtSubjectSearch.setText(""
-							+ arrayofsubjects.get(curPoswheel2).get("name"));
+							+ arrayofsubjects.get(curPoswheel2).get("Name"));
 				}
 
 				if (curPoswheel1 == -1)
@@ -564,6 +568,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				// TODO Auto-generated method stub
 				btnRadio.setVisibility(View.GONE);
 				webView.setVisibility(View.GONE);
+				relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
 				linearMystations.setVisibility(View.VISIBLE);
 				linearMystations.startAnimation(animBottomToTop);
 			}
@@ -708,11 +713,185 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		});
 	}
 
-	protected void getCommercials() {
+	protected void getSpeakers() {
 		// TODO Auto-generated method stub
 
 		progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
 				null, "Loading...	", true, false);
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("func", "getSpeakers");
+				map.put("userid", "3");
+
+				response = getResponse(map);
+				Log.i("response", "" + response);
+				Update_getSpeakers();
+			}
+		});
+		t.start();
+	}
+
+	protected void Update_getSpeakers() {
+		// TODO Auto-generated method stub
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+
+				if (response != null) {
+					try {
+						json_str = new JSONObject(response);
+						data_array = json_str.getString("Options");
+						array = new JSONArray(data_array);
+					} catch (JSONException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					arrayofspeakers.clear();
+
+					HashMap<String, String> map1 = new HashMap<String, String>();
+
+					map1.put("AttrID", "0");
+					map1.put("Name", "SPEAKER SEARCH");
+					map1.put("Description", "");
+					map1.put("Type", "");
+					map1.put("Image", "");
+					map1.put("Selected", "");
+					map1.put("Primary", "");
+
+					arrayofspeakers.add(map1);
+
+					for (int i = 0; i < array.length(); i++) {
+						JSONObject obj;
+						try {
+							obj = array.getJSONObject(i);
+							HashMap<String, String> map = new HashMap<String, String>();
+
+							map.put("AttrID", "" + obj.getString("AttrID"));
+							map.put("Name", "" + obj.getString("Name"));
+							map.put("Description",
+									"" + obj.getString("Description"));
+							map.put("Type", "" + obj.getString("Type"));
+							map.put("Image", "" + obj.getString("Image"));
+							map.put("Selected", "" + obj.getString("Selected"));
+							map.put("Primary", "" + obj.getString("Primary"));
+
+							arrayofspeakers.add(map);
+
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					if (isOnline()) {
+						getSubjects();
+					} else {
+						Toast.makeText(getApplicationContext(),
+								"" + Constant.network_error, Toast.LENGTH_SHORT)
+								.show();
+					}
+				}
+			}
+		});
+	}
+
+	protected void getSubjects() {
+		// TODO Auto-generated method stub
+
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("func", "getSubjects");
+				map.put("userid", "3");
+
+				response = getResponse(map);
+				Log.i("response", "" + response);
+				Update_getSubjects();
+			}
+		});
+		t.start();
+	}
+
+	protected void Update_getSubjects() {
+		// TODO Auto-generated method stub
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+
+				if (response != null) {
+					try {
+						json_str = new JSONObject(response);
+						data_array = json_str.getString("Options");
+						array = new JSONArray(data_array);
+					} catch (JSONException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					arrayofsubjects.clear();
+
+					HashMap<String, String> map1 = new HashMap<String, String>();
+
+					map1.put("AttrID", "0");
+					map1.put("Name", "SUBJECT SEARCH");
+					map1.put("Description", "");
+					map1.put("Type", "");
+					map1.put("Image", "");
+					map1.put("Selected", "");
+					map1.put("Primary", "");
+
+					arrayofsubjects.add(map1);
+
+					for (int i = 0; i < array.length(); i++) {
+						JSONObject obj;
+						try {
+							obj = array.getJSONObject(i);
+							HashMap<String, String> map = new HashMap<String, String>();
+
+							map.put("AttrID", "" + obj.getString("AttrID"));
+							map.put("Name", "" + obj.getString("Name"));
+							map.put("Description",
+									"" + obj.getString("Description"));
+							map.put("Type", "" + obj.getString("Type"));
+							map.put("Image", "" + obj.getString("Image"));
+							map.put("Selected", "" + obj.getString("Selected"));
+							map.put("Primary", "" + obj.getString("Primary"));
+
+							arrayofsubjects.add(map);
+
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					if (isOnline()) {
+						getCommercials();
+					} else {
+						Toast.makeText(getApplicationContext(),
+								"" + Constant.network_error, Toast.LENGTH_SHORT)
+								.show();
+					}
+				}
+			}
+		});
+	}
+
+	protected void getCommercials() {
+		// TODO Auto-generated method stub
+
 		Thread t = new Thread(new Runnable() {
 
 			@Override
@@ -803,21 +982,22 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		});
 	}
 
+	@SuppressWarnings("unused")
 	private void setArray() {
 		// TODO Auto-generated method stub
 		arrayofspeakers.clear();
 		for (int i = 0; i < array1.length; i++) {
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("id", "" + ids1[i]);
-			map.put("name", "" + array1[i]);
+			map.put("AttrID", "" + ids1[i]);
+			map.put("Name", "" + array1[i]);
 			arrayofspeakers.add(map);
 		}
 
 		arrayofsubjects.clear();
 		for (int i = 0; i < array2.length; i++) {
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("id", "" + ids2[i]);
-			map.put("name", "" + array2[i]);
+			map.put("AttrID", "" + ids2[i]);
+			map.put("Name", "" + array2[i]);
 			arrayofsubjects.add(map);
 		}
 	}
@@ -868,9 +1048,9 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					if (curPoswheel2 == -1)
 						curPoswheel2 = 0;
 					map.put("attrid1", ""
-							+ arrayofspeakers.get(curPoswheel1).get("id"));
+							+ arrayofspeakers.get(curPoswheel1).get("AttrID"));
 					map.put("attrid2", ""
-							+ arrayofsubjects.get(curPoswheel2).get("id"));
+							+ arrayofsubjects.get(curPoswheel2).get("AttrID"));
 				}
 				map.put("userid", "" + LLApplication.getUserId());
 
@@ -962,18 +1142,15 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					int size = LLApplication.getStationLists().size();
 
 					if (size > 0) {
-						/*int size_ = LLApplication.getCommercialsLists().size();
-						for (int i = size - 1; i >= 0; i--) {
-							if (i != 0 && i % 4 == 0) {
-								if (currentAdPos == size_)
-									currentAdPos = 0;
-								LLApplication.getStationLists().add(
-										i,
-										LLApplication.getCommercialsLists()
-												.get(currentAdPos));
-								currentAdPos++;
-							}
-						}*/
+						/*
+						 * int size_ =
+						 * LLApplication.getCommercialsLists().size(); for (int
+						 * i = size - 1; i >= 0; i--) { if (i != 0 && i % 4 ==
+						 * 0) { if (currentAdPos == size_) currentAdPos = 0;
+						 * LLApplication.getStationLists().add( i,
+						 * LLApplication.getCommercialsLists()
+						 * .get(currentAdPos)); currentAdPos++; } }
+						 */
 
 						/*
 						 * size = Common.getStationLists().size();
@@ -1689,6 +1866,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					player_btn4.setVisibility(View.VISIBLE);
 					btnRadio.setVisibility(View.GONE);
 					webView.setVisibility(View.GONE);
+					relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
 					linearMystations.setVisibility(View.VISIBLE);
 
 					slideMenuRight();
@@ -1700,7 +1878,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 					boolean temp = false;
 					for (int i = 0; i < ids1.length; i++) {
-						if (ids1[i].equals(id1)) {
+						if (arrayofspeakers.get(i).get("AttrID").equals(id1)) {
 							curPoswheel1 = i;
 							temp = true;
 						}
@@ -1709,14 +1887,16 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					// patch:
 					if (!temp) {
 						for (int i = 0; i < ids2.length; i++) {
-							if (ids2[i].equals(id1)) {
+							if (arrayofsubjects.get(i).get("AttrID")
+									.equals(id1)) {
 								curPoswheel1 = 0;
 								curPoswheel2 = i;
 							}
 						}
 					} else {
 						for (int i = 0; i < ids2.length; i++) {
-							if (ids2[i].equals(id2))
+							if (arrayofsubjects.get(i).get("AttrID")
+									.equals(id2))
 								curPoswheel2 = i;
 						}
 					}
@@ -1725,9 +1905,9 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					Log.i("AttrID2", "" + id2 + ".." + curPoswheel2);
 
 					txtSpeakerSearch.setText(""
-							+ arrayofspeakers.get(curPoswheel1).get("name"));
+							+ arrayofspeakers.get(curPoswheel1).get("Name"));
 					txtSubjectSearch.setText(""
-							+ arrayofsubjects.get(curPoswheel2).get("name"));
+							+ arrayofsubjects.get(curPoswheel2).get("Name"));
 					callmyStations(true);
 				}
 			});
@@ -1761,16 +1941,112 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				View convertView, ViewGroup parent) {
 			View row = convertView;
 
-			if (groupPosition == 7) {
-				row = getLayoutInflater().inflate(R.layout.logoutlayout, null);
-				ImageView img = (ImageView) row.findViewById(R.id.img);
-				img.setImageResource(listImg.get(groupPosition));
+			row = getLayoutInflater()
+					.inflate(R.layout.side_menu_list_row, null);
 
-				img.setOnClickListener(new OnClickListener() {
+			ImageView img = (ImageView) row.findViewById(R.id.img);
+			TextView text = (TextView) row.findViewById(R.id.text);
 
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
+			text.setText("" + listDataHeader.get(groupPosition));
+			img.setImageResource(listImg.get(groupPosition));
+
+			row.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					// TODO Auto-generated method stub
+					if (groupPosition == 0) {
+						btnRadio.setVisibility(View.GONE);
+						webView.setVisibility(View.GONE);
+						relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
+						linearMystations.setVisibility(View.VISIBLE);
+
+						slideMenuRight();
+					} else if (groupPosition == 1) {
+						player_btn4.setVisibility(View.GONE);
+						btnRadio.setVisibility(View.GONE);
+						webView.setVisibility(View.GONE);
+						relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
+						linearMystations.setVisibility(View.VISIBLE);
+
+						slideMenuRight();
+
+						curPoswheel1 = 0;
+						curPoswheel2 = 0;
+						txtSpeakerSearch
+								.setText(""
+										+ arrayofspeakers.get(curPoswheel1)
+												.get("Name"));
+						txtSubjectSearch
+								.setText(""
+										+ arrayofsubjects.get(curPoswheel2)
+												.get("Name"));
+						callmyStations(true);
+
+					} else if (groupPosition == 2) {
+						player_btn4.setVisibility(View.GONE);
+						btnRadio.setVisibility(View.GONE);
+						webView.setVisibility(View.GONE);
+						relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
+						linearMystations.setVisibility(View.VISIBLE);
+
+						slideMenuRight();
+
+						curPoswheel1 = 0;
+						curPoswheel2 = 0;
+						txtSpeakerSearch
+								.setText(""
+										+ arrayofspeakers.get(curPoswheel1)
+												.get("Name"));
+						txtSubjectSearch
+								.setText(""
+										+ arrayofsubjects.get(curPoswheel2)
+												.get("Name"));
+						curPoswheel1 = -1;
+						curPoswheel2 = -1;
+						callmyStations(true);
+
+					} else if (groupPosition == 3) {
+						btnRadio.setVisibility(View.VISIBLE);
+						linearMystations.setVisibility(View.GONE);
+						webView.setVisibility(View.VISIBLE);
+						relativeTop.setBackgroundColor(Color.parseColor("#B8B8B8"));
+						webView.loadUrl("file:///android_res/raw/help.html");
+
+						slideMenuRight();
+					} else if (groupPosition == 4) {
+						btnRadio.setVisibility(View.VISIBLE);
+						linearMystations.setVisibility(View.GONE);
+						webView.setVisibility(View.VISIBLE);
+						relativeTop.setBackgroundColor(Color.parseColor("#B8B8B8"));
+						webView.loadUrl("file:///android_res/raw/terms.html");
+
+						slideMenuRight();
+					} else if (groupPosition == 5) {
+						btnRadio.setVisibility(View.VISIBLE);
+						linearMystations.setVisibility(View.GONE);
+						webView.setVisibility(View.VISIBLE);
+						relativeTop.setBackgroundColor(Color.parseColor("#B8B8B8"));
+						webView.loadUrl("file:///android_res/raw/privacy.html");
+
+						slideMenuRight();
+					} else if (groupPosition == 6) {
+
+						Intent emailIntent = new Intent(
+								android.content.Intent.ACTION_SEND);
+						emailIntent.setType("message/rfc822");
+
+						emailIntent.putExtra(
+								android.content.Intent.EXTRA_SUBJECT,
+								Constant.Alert_Name);
+						emailIntent
+								.putExtra(
+										android.content.Intent.EXTRA_EMAIL,
+										new String[] { "lifesupport@life-leadership-home.com" });
+						startActivity(Intent.createChooser(emailIntent,
+								"Email:"));
+
+					} else if (groupPosition == 7) {
 						AlertDialog.Builder alert = new AlertDialog.Builder(
 								mContext);
 						alert.setTitle(Constant.Alert_Name);
@@ -1833,110 +2109,6 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						alert.create();
 						alert.show();
 					}
-				});
-			} else {
-				row = getLayoutInflater().inflate(R.layout.side_menu_list_row,
-						null);
-
-				ImageView img = (ImageView) row.findViewById(R.id.img);
-				TextView text = (TextView) row.findViewById(R.id.text);
-
-				text.setText("" + listDataHeader.get(groupPosition));
-				img.setImageResource(listImg.get(groupPosition));
-
-			}
-
-			row.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					// TODO Auto-generated method stub
-					if (groupPosition == 0) {
-						btnRadio.setVisibility(View.GONE);
-						webView.setVisibility(View.GONE);
-						linearMystations.setVisibility(View.VISIBLE);
-
-						slideMenuRight();
-					} else if (groupPosition == 1) {
-						player_btn4.setVisibility(View.GONE);
-						btnRadio.setVisibility(View.GONE);
-						webView.setVisibility(View.GONE);
-						linearMystations.setVisibility(View.VISIBLE);
-
-						slideMenuRight();
-
-						curPoswheel1 = 0;
-						curPoswheel2 = 0;
-						txtSpeakerSearch
-								.setText(""
-										+ arrayofspeakers.get(curPoswheel1)
-												.get("name"));
-						txtSubjectSearch
-								.setText(""
-										+ arrayofsubjects.get(curPoswheel2)
-												.get("name"));
-						callmyStations(true);
-
-					} else if (groupPosition == 2) {
-						player_btn4.setVisibility(View.GONE);
-						btnRadio.setVisibility(View.GONE);
-						webView.setVisibility(View.GONE);
-						linearMystations.setVisibility(View.VISIBLE);
-
-						slideMenuRight();
-
-						curPoswheel1 = 0;
-						curPoswheel2 = 0;
-						txtSpeakerSearch
-								.setText(""
-										+ arrayofspeakers.get(curPoswheel1)
-												.get("name"));
-						txtSubjectSearch
-								.setText(""
-										+ arrayofsubjects.get(curPoswheel2)
-												.get("name"));
-						curPoswheel1 = -1;
-						curPoswheel2 = -1;
-						callmyStations(true);
-
-					} else if (groupPosition == 3) {
-						btnRadio.setVisibility(View.VISIBLE);
-						linearMystations.setVisibility(View.GONE);
-						webView.setVisibility(View.VISIBLE);
-						webView.loadUrl("file:///android_res/raw/help.html");
-
-						slideMenuRight();
-					} else if (groupPosition == 4) {
-						btnRadio.setVisibility(View.VISIBLE);
-						linearMystations.setVisibility(View.GONE);
-						webView.setVisibility(View.VISIBLE);
-						webView.loadUrl("file:///android_res/raw/terms.html");
-
-						slideMenuRight();
-					} else if (groupPosition == 5) {
-						btnRadio.setVisibility(View.VISIBLE);
-						linearMystations.setVisibility(View.GONE);
-						webView.setVisibility(View.VISIBLE);
-						webView.loadUrl("file:///android_res/raw/privacy.html");
-
-						slideMenuRight();
-					} else if (groupPosition == 6) {
-
-						Intent emailIntent = new Intent(
-								android.content.Intent.ACTION_SEND);
-						emailIntent.setType("message/rfc822");
-
-						emailIntent.putExtra(
-								android.content.Intent.EXTRA_SUBJECT,
-								Constant.Alert_Name);
-						emailIntent
-								.putExtra(
-										android.content.Intent.EXTRA_EMAIL,
-										new String[] { "lifesupport@life-leadership-home.com" });
-						startActivity(Intent.createChooser(emailIntent,
-								"Email:"));
-
-					}
 				}
 			});
 
@@ -1979,13 +2151,11 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		listImgs.add(R.drawable.terms);
 		listImgs.add(R.drawable.privacy);
 		listImgs.add(R.drawable.contact);
-		listImgs.add(R.drawable.logout_btn);
+		listImgs.add(R.drawable.logout);
 
 		// Adding child data
+		@SuppressWarnings("unused")
 		List<String> likedAudio = new ArrayList<String>();
-		likedAudio.add("Chris Brady");
-		likedAudio.add("Faith");
-		likedAudio.add("Dan Hawkins");
 
 		ArrayList<HashMap<String, String>> dummy = new ArrayList<HashMap<String, String>>();
 
@@ -2036,7 +2206,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 		@Override
 		protected CharSequence getItemText(int index) {
-			return list.get(index).get("name");
+			return list.get(index).get("Name");
 		}
 	}
 
