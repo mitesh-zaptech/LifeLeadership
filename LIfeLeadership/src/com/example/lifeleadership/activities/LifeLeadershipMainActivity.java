@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings.Global;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -812,7 +813,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				// TODO Auto-generated method stub
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("func", "getSubjects");
-				map.put("userid", "3");
+				map.put("userid", ""+LLApplication.getUserId());
 
 				response = getResponse(map);
 				Log.i("response", "" + response);
