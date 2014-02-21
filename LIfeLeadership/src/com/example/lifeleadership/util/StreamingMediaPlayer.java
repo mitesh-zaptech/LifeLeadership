@@ -12,6 +12,7 @@ import java.net.URLConnection;
 import java.util.HashMap;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
@@ -23,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.lifeleadership.LLApplication;
+import com.example.lifeleadership.activities.LifeLeadershipMainActivity;
 import com.example.lifeleadership.activities.R;
 
 public class StreamingMediaPlayer {
@@ -61,6 +63,7 @@ public class StreamingMediaPlayer {
 		this.textStreamed = textStreamed;
 		this.playButton = playButton;
 		this.progressBar = progressBar;
+
 	}
 
 	/**

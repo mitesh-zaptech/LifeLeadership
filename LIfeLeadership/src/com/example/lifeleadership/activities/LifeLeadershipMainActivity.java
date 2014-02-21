@@ -129,17 +129,18 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	private boolean booleanScrolling = false;
 	WheelView wheelSelectSpeaker;
 	int curPoswheel1 = 0, curPoswheel2 = 0, curSelectedwheel = 0;
-	String[] array1 = new String[] { "SPEAKER SEARCH", "Dr. Tom Ascol",
-			"Kirk Birtles", "Chris Brady", "Terri Brady", "Larry Van Buskirk",
-			"Stephen Davey", "Oliver DeMille", "George Guzzardo",
-			"Claude Hamilton", "Ken Hamm", "Dan Hawkins", "Bill Lewis",
-			"Tim Marks", "Marc Militello", "Mark Paul", "Laurie Woodward",
-			"Orrin Woodward" };
-	String[] ids1 = { "0", "54", "11", "3", "15", "53", "26", "12", "7", "4",
-			"55", "6", "30", "14", "16", "18", "17", "13" };
-	String[] array2 = new String[] { "SUBJECT SEARCH", "Faith", "Family",
-			"Finances", "Fitness", "Fun", "Following", "Freedom", "Friends" };
-	String[] ids2 = { "0", "32", "33", "34", "35", "39", "36", "37", "38" };
+	/*
+	 * String[] array1 = new String[] { "SPEAKER SEARCH", "Dr. Tom Ascol",
+	 * "Kirk Birtles", "Chris Brady", "Terri Brady", "Larry Van Buskirk",
+	 * "Stephen Davey", "Oliver DeMille", "George Guzzardo", "Claude Hamilton",
+	 * "Ken Hamm", "Dan Hawkins", "Bill Lewis", "Tim Marks", "Marc Militello",
+	 * "Mark Paul", "Laurie Woodward", "Orrin Woodward" }; String[] ids1 = {
+	 * "0", "54", "11", "3", "15", "53", "26", "12", "7", "4", "55", "6", "30",
+	 * "14", "16", "18", "17", "13" }; String[] array2 = new String[] {
+	 * "SUBJECT SEARCH", "Faith", "Family", "Finances", "Fitness", "Fun",
+	 * "Following", "Freedom", "Friends" }; String[] ids2 = { "0", "32", "33",
+	 * "34", "35", "39", "36", "37", "38" };
+	 */
 	ArrayList<HashMap<String, String>> arrayofspeakers = new ArrayList<HashMap<String, String>>();
 	ArrayList<HashMap<String, String>> arrayofsubjects = new ArrayList<HashMap<String, String>>();
 
@@ -277,7 +278,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		};
 
 		relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
-		
+
 		// WebView:
 		webView = (WebView) findViewById(R.id.webview);
 		webView.setBackgroundColor(0x00000000);
@@ -726,7 +727,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				// TODO Auto-generated method stub
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("func", "getSpeakers");
-				map.put("userid", "3");
+				map.put("userid", "" + LLApplication.getUserId());
 
 				response = getResponse(map);
 				Log.i("response", "" + response);
@@ -813,7 +814,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				// TODO Auto-generated method stub
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("func", "getSubjects");
-				map.put("userid", ""+LLApplication.getUserId());
+				map.put("userid", "" + LLApplication.getUserId());
 
 				response = getResponse(map);
 				Log.i("response", "" + response);
@@ -983,25 +984,18 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		});
 	}
 
-	@SuppressWarnings("unused")
-	private void setArray() {
-		// TODO Auto-generated method stub
-		arrayofspeakers.clear();
-		for (int i = 0; i < array1.length; i++) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("AttrID", "" + ids1[i]);
-			map.put("Name", "" + array1[i]);
-			arrayofspeakers.add(map);
-		}
-
-		arrayofsubjects.clear();
-		for (int i = 0; i < array2.length; i++) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("AttrID", "" + ids2[i]);
-			map.put("Name", "" + array2[i]);
-			arrayofsubjects.add(map);
-		}
-	}
+	/*
+	 * @SuppressWarnings("unused") private void setArray() { // TODO
+	 * Auto-generated method stub arrayofspeakers.clear(); for (int i = 0; i <
+	 * array1.length; i++) { HashMap<String, String> map = new HashMap<String,
+	 * String>(); map.put("AttrID", "" + ids1[i]); map.put("Name", "" +
+	 * array1[i]); arrayofspeakers.add(map); }
+	 * 
+	 * arrayofsubjects.clear(); for (int i = 0; i < array2.length; i++) {
+	 * HashMap<String, String> map = new HashMap<String, String>();
+	 * map.put("AttrID", "" + ids2[i]); map.put("Name", "" + array2[i]);
+	 * arrayofsubjects.add(map); } }
+	 */
 
 	private void callmyStations(final boolean flagPb) {
 		// TODO Auto-generated method stub
@@ -1220,13 +1214,18 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		relativeAppSection4.setVisibility(View.GONE);
 
 		if (btnPlay.isEnabled() && audioStreamer != null) {
-			if (audioStreamer.getMediaPlayer().isPlaying()) {
-				audioStreamer.getMediaPlayer().pause();
-				btnPlay.setBackgroundResource(R.drawable.playbtn_big_red);
-				// sb.setEnabled(false);
-			} else {
-				startAudio();
+			try {
+				if (audioStreamer.getMediaPlayer().isPlaying()) {
+					audioStreamer.getMediaPlayer().pause();
+					btnPlay.setBackgroundResource(R.drawable.playbtn_big_red);
+					// sb.setEnabled(false);
+				} else {
+					startAudio();
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
+
 		} else {
 			progressDialog = ProgressDialog.show(
 					LifeLeadershipMainActivity.this, null, "Streaming...",
@@ -1878,7 +1877,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 							.get(childPosition).get("AttrID2");
 
 					boolean temp = false;
-					for (int i = 0; i < ids1.length; i++) {
+					for (int i = 0; i < arrayofspeakers.size(); i++) {
 						if (arrayofspeakers.get(i).get("AttrID").equals(id1)) {
 							curPoswheel1 = i;
 							temp = true;
@@ -1887,7 +1886,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 					// patch:
 					if (!temp) {
-						for (int i = 0; i < ids2.length; i++) {
+						for (int i = 0; i < arrayofsubjects.size(); i++) {
 							if (arrayofsubjects.get(i).get("AttrID")
 									.equals(id1)) {
 								curPoswheel1 = 0;
@@ -1895,7 +1894,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 							}
 						}
 					} else {
-						for (int i = 0; i < ids2.length; i++) {
+						for (int i = 0; i < arrayofsubjects.size(); i++) {
 							if (arrayofsubjects.get(i).get("AttrID")
 									.equals(id2))
 								curPoswheel2 = i;
@@ -1959,7 +1958,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					if (groupPosition == 0) {
 						btnRadio.setVisibility(View.GONE);
 						webView.setVisibility(View.GONE);
-						relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
+						relativeTop.setBackgroundColor(Color
+								.parseColor("#D22129"));
 						linearMystations.setVisibility(View.VISIBLE);
 
 						slideMenuRight();
@@ -1967,7 +1967,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						player_btn4.setVisibility(View.GONE);
 						btnRadio.setVisibility(View.GONE);
 						webView.setVisibility(View.GONE);
-						relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
+						relativeTop.setBackgroundColor(Color
+								.parseColor("#D22129"));
 						linearMystations.setVisibility(View.VISIBLE);
 
 						slideMenuRight();
@@ -1988,7 +1989,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						player_btn4.setVisibility(View.GONE);
 						btnRadio.setVisibility(View.GONE);
 						webView.setVisibility(View.GONE);
-						relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
+						relativeTop.setBackgroundColor(Color
+								.parseColor("#D22129"));
 						linearMystations.setVisibility(View.VISIBLE);
 
 						slideMenuRight();
@@ -2011,7 +2013,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						btnRadio.setVisibility(View.VISIBLE);
 						linearMystations.setVisibility(View.GONE);
 						webView.setVisibility(View.VISIBLE);
-						relativeTop.setBackgroundColor(Color.parseColor("#B8B8B8"));
+						relativeTop.setBackgroundColor(Color
+								.parseColor("#B8B8B8"));
 						webView.loadUrl("file:///android_res/raw/help.html");
 
 						slideMenuRight();
@@ -2019,7 +2022,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						btnRadio.setVisibility(View.VISIBLE);
 						linearMystations.setVisibility(View.GONE);
 						webView.setVisibility(View.VISIBLE);
-						relativeTop.setBackgroundColor(Color.parseColor("#B8B8B8"));
+						relativeTop.setBackgroundColor(Color
+								.parseColor("#B8B8B8"));
 						webView.loadUrl("file:///android_res/raw/terms.html");
 
 						slideMenuRight();
@@ -2027,7 +2031,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						btnRadio.setVisibility(View.VISIBLE);
 						linearMystations.setVisibility(View.GONE);
 						webView.setVisibility(View.VISIBLE);
-						relativeTop.setBackgroundColor(Color.parseColor("#B8B8B8"));
+						relativeTop.setBackgroundColor(Color
+								.parseColor("#B8B8B8"));
 						webView.loadUrl("file:///android_res/raw/privacy.html");
 
 						slideMenuRight();
