@@ -98,7 +98,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	Button btnSlider, btnRadio;
 	Button btnDone, btnCancel;
 	Animation animBottomToTop, animTopToBottom;
-	RelativeLayout relativeBottom, relativeTop;
+	RelativeLayout relativeBottom, relativeTop, relativeSpeakerSearch,
+			relativeSubjectSearch;
 	LinearLayout relativeAppSection4, relativeAppSection3;
 	boolean booleanClicked = false;
 	Button btnPlay, btnLike, player_btn1, player_btn2, player_btn3,
@@ -209,6 +210,10 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		relativeAppSection4 = (LinearLayout) applicationView
 				.findViewById(R.id.relativeAppSection4);
 
+		relativeSpeakerSearch = (RelativeLayout) applicationView
+				.findViewById(R.id.relativeSpeakerSearch);
+		relativeSubjectSearch = (RelativeLayout) applicationView
+				.findViewById(R.id.relativeSubjectSearch);
 		linearMystations = (LinearLayout) applicationView
 				.findViewById(R.id.mystations);
 		txtSpeakerSearch = (TextView) applicationView
@@ -394,7 +399,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			}
 		});
 
-		txtSpeakerSearch.setOnClickListener(new OnClickListener() {
+		relativeSpeakerSearch.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
@@ -411,7 +416,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			}
 		});
 
-		txtSubjectSearch.setOnClickListener(new OnClickListener() {
+		relativeSubjectSearch.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {

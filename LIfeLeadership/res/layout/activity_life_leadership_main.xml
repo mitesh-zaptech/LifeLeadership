@@ -78,6 +78,7 @@
                 android:layout_weight="1" />
 
             <RelativeLayout
+                android:id="@+id/relativeSpeakerSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -99,6 +100,7 @@
                 android:layout_weight="1" />
 
             <RelativeLayout
+                android:id="@+id/relativeSubjectSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
