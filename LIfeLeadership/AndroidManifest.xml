@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.lifeleadership.activities"
+    package="com.rmrdevelopment.lifeleadership"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:theme="@style/generalnotitle" >
         <activity
-            android:name=".SplashActivity"
+            android:name="com.rmrdevelopment.lifeleadership.activities.SplashActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -31,19 +31,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LifeLeadershipMainActivity"
+            android:name="com.rmrdevelopment.lifeleadership.activities.LifeLeadershipMainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.rmrdevelopment.lifeleadership.activities.LoginActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".ForgotPassword"
+            android:name="com.rmrdevelopment.lifeleadership.activities.ForgotPassword"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
