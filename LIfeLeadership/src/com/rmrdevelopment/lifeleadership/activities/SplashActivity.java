@@ -3,17 +3,22 @@ package com.rmrdevelopment.lifeleadership.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Window;
 
 import com.crittercism.app.Crittercism;
 import com.rmrdevelopment.lifeleadership.LLApplication;
 import com.rmrdevelopment.lifeleadership.R;
-import com.rmrdevelopment.lifeleadership.util.DataBaseManager;
+import com.rmrdevelopment.lifeleadership.SQLiteHelper;
 
 public class SplashActivity extends Activity {
 
-	public static DataBaseManager db;
+	//public static DataBaseManager db;
+	
+	SQLiteHelper helper;
+	public static SQLiteDatabase db = null;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +27,13 @@ public class SplashActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.splash_scr);
+		
+		helper = new SQLiteHelper(this, "lifeleadership.sqlite");
+		helper.createDatabase();
+		db = helper.openDatabase();
 
-		db = DataBaseManager.getDBAdapterInstance(getApplicationContext());
-		Crittercism.initialize(getApplicationContext(),
-				"52c68f1de432f5310b000009");
+		//db = DataBaseManager.getDBAdapterInstance(getApplicationContext());
+		Crittercism.initialize(getApplicationContext(), "52c68f1de432f5310b000009");
 
 		new Thread() {
 			public void run() {
@@ -37,7 +45,7 @@ public class SplashActivity extends Activity {
 					}
 				} catch (InterruptedException e) {
 				} finally {
-					Cursor crsr = db.rawQuery("select * from user");
+					Cursor crsr = db.rawQuery("select * from user", null);
 					if (crsr != null) {
 						if (crsr.getCount() > 0) {
 							crsr.moveToFirst();

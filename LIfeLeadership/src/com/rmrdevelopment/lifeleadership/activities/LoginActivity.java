@@ -266,7 +266,7 @@ public class LoginActivity extends BaseActivity {
 						values.put("remember", "" + LLApplication.getRemember());
 						values.put("userloggedin",
 								"" + LLApplication.getUserloggedin());
-						SplashActivity.db.update("user", values, "pk=1");
+						SplashActivity.db.update("user", values, "pk=1", null);
 
 						Intent intent = new Intent(LoginActivity.this,
 								LifeLeadershipMainActivity.class);

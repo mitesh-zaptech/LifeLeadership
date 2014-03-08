@@ -1977,12 +1977,10 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						curPoswheel1 = 0;
 						curPoswheel2 = 0;
 						txtSpeakerSearch
-								.setText(""
-										+ arrayofspeakers.get(curPoswheel1)
+								.setText(""+ arrayofspeakers.get(curPoswheel1)
 												.get("Name"));
 						txtSubjectSearch
-								.setText(""
-										+ arrayofsubjects.get(curPoswheel2)
+								.setText(""+ arrayofsubjects.get(curPoswheel2)
 												.get("Name"));
 						callmyStations(true);
 
@@ -2078,8 +2076,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 										values.put("remember", ""
 												+ LLApplication.getRemember());
 										values.put("userloggedin", "0");
-										SplashActivity.db.update("user",
-												values, "pk=1");
+										SplashActivity.db.update("user", values, "pk=1", null);
 
 										android.os.Handler hn = new android.os.Handler();
 										hn.postDelayed(new Runnable() {
@@ -2230,7 +2227,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			values.put("UserID", "" + LLApplication.getUserId());
 			values.put("remember", "" + LLApplication.getRemember());
 			values.put("userloggedin", "0");
-			SplashActivity.db.update("user", values, "pk=1");
+			SplashActivity.db.update("user", values, "pk=1", null);
 
 			android.os.Handler hn = new android.os.Handler();
 			hn.postDelayed(new Runnable() {

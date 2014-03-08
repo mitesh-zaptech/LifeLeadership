@@ -74,9 +74,15 @@ public class DataBaseManager extends SQLiteOpenHelper {
 	 **/
 	public void createDataBase() throws IOException {
 		// Log.d("database", "Create Database");
-
 		DB_PATH = myContext.getExternalCacheDir();
-		DB_PATH.mkdirs();
+		if(DB_PATH==null){
+			//Log.i("DBPATH", "NULL");
+			DB_PATH = myContext.getCacheDir();
+		}
+		
+		if(!DB_PATH.isDirectory()){
+			DB_PATH.mkdirs();
+		}
 		File db = new File(DB_PATH, DB_NAME);
 		if (!db.exists()) {
 			db.createNewFile();
@@ -184,7 +190,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
 	 */
 	public SQLiteDatabase openDataBase() throws SQLException {
 
-		File DB_PATH = myContext.getExternalCacheDir();
+		//File DB_PATH = myContext.getExternalCacheDir();
 		File dbFile = new File(DB_PATH, DB_NAME);
 		myDataBase = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(),
 				null, SQLiteDatabase.OPEN_READWRITE);
