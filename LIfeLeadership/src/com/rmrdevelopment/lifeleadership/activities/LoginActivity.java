@@ -207,6 +207,12 @@ public class LoginActivity extends BaseActivity {
 						e1.printStackTrace();
 					}
 				}
+				else{
+					Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_LONG).show();
+					if(progressDialog!=null && progressDialog.isShowing()){
+						progressDialog.dismiss();
+					}
+				}
 			}
 		});
 	}
@@ -278,6 +284,11 @@ public class LoginActivity extends BaseActivity {
 					} catch (JSONException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
+					}
+				}else {
+					Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_LONG).show();
+					if(progressDialog!=null && progressDialog.isShowing()){
+						progressDialog.dismiss();
 					}
 				}
 

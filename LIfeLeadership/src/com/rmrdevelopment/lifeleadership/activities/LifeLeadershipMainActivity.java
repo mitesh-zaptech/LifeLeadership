@@ -22,6 +22,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -133,6 +135,9 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 	ArrayList<HashMap<String, String>> arrayofspeakers = new ArrayList<HashMap<String, String>>();
 	ArrayList<HashMap<String, String>> arrayofsubjects = new ArrayList<HashMap<String, String>>();
+	
+	//Telephony Manager:
+	TelephonyManager mgr ;
 
 	@Override
 	protected void onResume() {
@@ -280,9 +285,53 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setHorizontalScrollBarEnabled(false);
 		webView.setVerticalScrollBarEnabled(true);
+		
+		 mgr = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+		if (mgr != null) {
+			mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+		}
 
 	}
 
+	PhoneStateListener phoneStateListener = new PhoneStateListener() {
+	    @Override
+	    public void onCallStateChanged(int state, String incomingNumber) {
+	        if (state == TelephonyManager.CALL_STATE_RINGING) {
+	            //Incoming call: Pause music
+	        	Log.e("TelephonyManager","CALL_STATE_RINGING");
+	        	if (txtTotalTime.getText().length() > 0) {
+					if (LLApplication.getStationLists().size() > currentStationPos) {
+						if (isOnline()) {
+							playStreaming();
+						} else {
+							Toast.makeText(getApplicationContext(),
+									"" + Constant.network_error,
+									Toast.LENGTH_SHORT).show();
+						}
+					}
+				}
+	        } else if(state == TelephonyManager.CALL_STATE_IDLE) {
+	            //Not in call: Play music
+	        	Log.e("TelephonyManager","CALL_STATE_IDLE");
+	        	if (txtTotalTime.getText().length() > 0) {
+					if (LLApplication.getStationLists().size() > currentStationPos) {
+						if (isOnline()) {
+							playStreaming();
+						} else {
+							Toast.makeText(getApplicationContext(),
+									"" + Constant.network_error,
+									Toast.LENGTH_SHORT).show();
+						}
+					}
+				}
+	        } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
+	            //A call is dialing, active or on hold
+	        	Log.e("TelephonyManager","CALL_STATE_OFFHOOK");
+	        }
+	        super.onCallStateChanged(state, incomingNumber);
+	    }
+	};
+	
 	private void onClickEvents() {
 
 		// Listview Group click listener
@@ -631,6 +680,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				// TODO Auto-generated method stub
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("func", "getSkipCount");
+				map.put("userID", ""+LLApplication.getUserId());
 
 				String tempResponse = getResponse(map);
 				Log.i("response", "" + tempResponse);
@@ -678,6 +728,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				// TODO Auto-generated method stub
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("func", "updateSkipCount");
+				map.put("userID", ""+LLApplication.getUserId());
 
 				String tempResponse = getResponse(map);
 				Log.i("response", "" + tempResponse);
@@ -2250,6 +2301,9 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		if (audioStreamer != null) {
 			audioStreamer.interrupt();
 		}
+		if(mgr != null) {
+		    mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+		}
 	}
 
 	@Override
@@ -2351,4 +2405,6 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		Log.i("leftSwipe", "" + menuOut);
 		menuOut = !menuOut;
 	}
+	
+	
 }
