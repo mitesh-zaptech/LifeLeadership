@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -45,8 +46,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupCollapseListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,6 +56,7 @@ import android.widget.Toast;
 import bipin.wheel.widget.WheelView;
 import bipin.wheel.widget.adapters.AbstractWheelTextAdapter;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -71,73 +71,96 @@ import com.rmrdevelopment.lifeleadership.util.StreamingMediaPlayer;
 public class LifeLeadershipMainActivity extends BaseActivity implements
 		OnGestureListener {
 
-	LayoutInflater inflater;
+	private LayoutInflater inflater;
 	static float scale = 0f;
-	Context mContext;
-	HorizontalSideScrollView horizontalScrollView;
+	private Context mContext;
+	private  HorizontalSideScrollView horizontalScrollView;
 
 	// gesture
 	private GestureDetector gestureDetector;
-	View.OnTouchListener gestureListener;
+	@SuppressWarnings("unused")
+	private  View.OnTouchListener gestureListener;
 	private static final int SWIPE_MIN_DISTANCE = 120;
 	private static final int SWIPE_MAX_OFF_PATH = 250;
 	private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 
 	// MenuView
-	View menuView;
-	static boolean menuOut = false;
-	Button btnLogout;
-	ExpandableListView expListView;
-	ExpandableListAdapter listAdapter;
-	List<String> listDataHeader;
-	ArrayList<Integer> listImgs;
-	HashMap<String, ArrayList<HashMap<String, String>>> mapDataChild;
-	int expandedPos = 0;
-	// boolean flag = false;
+	private View menuView;
+	private static boolean menuOut = false;
+	private ExpandableListView expListView;
+	private ExpandableListAdapter listAdapter;
+	private List<String> listDataHeader;
+	private ArrayList<Integer> listImgs;
+	private HashMap<String, ArrayList<HashMap<String, String>>> mapDataChild;
 
 	// AppView
-	View applicationView;
-	Button btnSlider, btnRadio;
-	Button btnDone, btnCancel;
-	Animation animBottomToTop, animTopToBottom;
-	RelativeLayout relativeBottom, relativeTop, relativeSpeakerSearch,
-			relativeSubjectSearch;
-	LinearLayout relativeAppSection4, relativeAppSection3;
-	boolean booleanClicked = false;
-	Button btnPlay, btnLike, player_btn1, player_btn2, player_btn3,
-			player_btn4;
-	RelativeLayout btnNext;
-	TextView txtNext;
-	private StreamingMediaPlayer audioStreamer = null;
-	int currentStationPos = 0;
-	ImageView imgThumb;
-	TextView txtArtist, txtTitle, txtStationname, txtSpeakerSearch,
-			txtSubjectSearch, txtCurrentTime;
+	private View applicationView;
+	private Button btnSlider;
+	private Button btnRadio;
+	private Button btnDone;
+	private Button btnCancel;
+	private Button btnPlay;
+	private Button btnLike;
+	private Button player_btn1;
+	private Button player_btn2; 
+	private Button player_btn4;
+	
+	private Animation animBottomToTop;
+	private Animation animTopToBottom;
+	
+	private RelativeLayout btnRelativeNext;
+	private RelativeLayout btnRelativeRewind;
+	private RelativeLayout relativeBottom;
+	private RelativeLayout relativeTop;
+	private RelativeLayout relativeSpeakerSearch;
+	private RelativeLayout relativeSubjectSearch;
+	
+	private LinearLayout linearAppSection4;
+	private LinearLayout linearAppSection3;
+	
+	private boolean booleanClicked = false;
+	
+	private TextView txtNext;
+	private TextView txtArtist;
+	private TextView txtTitle;
+	private TextView txtStationname;
+	private TextView txtSpeakerSearch;
+	private TextView txtSubjectSearch;
+	private TextView txtCurrentTime;
+	private ImageView imgThumb;
 	public static TextView txtTotalTime;
-	ProgressBar progressBar;
+	private StreamingMediaPlayer audioStreamer = null;
+	private int currentStationPos = 0;
+	
+	private ProgressBar progressBar;
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
-	DisplayImageOptions options;
-	LinearLayout linearMystations;
-	WebView webView;
-	boolean booleanFlagFav = false;
-	boolean booleanFlagLiked = false;
-	boolean booleanFlagExpand = false;
-	boolean booleanFlagText = false;
-	Typeface typeFace1, typeFace2;
+	private DisplayImageOptions options;
+	private LinearLayout linearMystations;
+	private WebView webView;
+	private WebView webviewIdCard;
+	
+	//ImageView imgIdCard;
+	private boolean booleanFlagFav = false;
+	private boolean booleanFlagLiked = false;
+	private boolean booleanFlagText = false;
+	private Typeface typeFace1;
+	private Typeface typeFace2;
 	public static LifeLeadershipMainActivity lifeObj;
 	public int currentAdPos;
 
 	// Wheel:
 	@SuppressWarnings("unused")
 	private boolean booleanScrolling = false;
-	WheelView wheelSelectSpeaker;
-	int curPoswheel1 = 0, curPoswheel2 = 0, curSelectedwheel = 0;
+	private WheelView wheelSelectSpeaker;
+	private int curPoswheel1 = 0;
+	private int curPoswheel2 = 0;
+	private int curSelectedwheel = 0;
 
-	ArrayList<HashMap<String, String>> arrayofspeakers = new ArrayList<HashMap<String, String>>();
-	ArrayList<HashMap<String, String>> arrayofsubjects = new ArrayList<HashMap<String, String>>();
+	private ArrayList<HashMap<String, String>> arrayofspeakers = new ArrayList<HashMap<String, String>>();
+	private ArrayList<HashMap<String, String>> arrayofsubjects = new ArrayList<HashMap<String, String>>();
 	
 	//Telephony Manager:
-	TelephonyManager mgr ;
+	private TelephonyManager mgr ;
 
 	@Override
 	protected void onResume() {
@@ -150,12 +173,27 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					"" + Constant.network_error, Toast.LENGTH_SHORT).show();
 		}
 	}
+	
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this); 
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); 
 
 		lifeObj = this;
 		mContext = this;
@@ -199,9 +237,9 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		btnSlider = (Button) applicationView.findViewById(R.id.buttonSlide);
 		btnRadio = (Button) applicationView.findViewById(R.id.radiobtn);
 
-		relativeAppSection3 = (LinearLayout) applicationView
+		linearAppSection3 = (LinearLayout) applicationView
 				.findViewById(R.id.relativeAppSection3);
-		relativeAppSection4 = (LinearLayout) applicationView
+		linearAppSection4 = (LinearLayout) applicationView
 				.findViewById(R.id.relativeAppSection4);
 
 		relativeSpeakerSearch = (RelativeLayout) applicationView
@@ -221,7 +259,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		relativeTop = (RelativeLayout) applicationView.findViewById(R.id.top);
 		btnPlay = (Button) applicationView.findViewById(R.id.play);
 		btnLike = (Button) applicationView.findViewById(R.id.like);
-		btnNext = (RelativeLayout) applicationView.findViewById(R.id.next);
+		btnRelativeNext = (RelativeLayout) applicationView.findViewById(R.id.next);
+		btnRelativeRewind= (RelativeLayout) applicationView.findViewById(R.id.layoutRewind);
 		txtNext = (TextView) applicationView.findViewById(R.id.txtNext);
 		player_btn1 = (Button) applicationView.findViewById(R.id.player_btn1);
 		player_btn2 = (Button) applicationView.findViewById(R.id.player_btn2);
@@ -229,7 +268,6 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		player_btn1.setVisibility(View.GONE);
 		player_btn2.setVisibility(View.GONE);
 
-		player_btn3 = (Button) applicationView.findViewById(R.id.playerbtn3);
 		player_btn4 = (Button) applicationView.findViewById(R.id.player_btn4);
 		imgThumb = (ImageView) applicationView.findViewById(R.id.thumg_img);
 		txtArtist = (TextView) applicationView.findViewById(R.id.artist);
@@ -248,7 +286,6 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		expListView.setDivider(null);
 		expListView.setDividerHeight(0);
 
-		booleanFlagExpand = false;
 		prepareListData();
 
 		final View[] children = new View[] { menuView, applicationView };
@@ -281,142 +318,73 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		// WebView:
 		webView = (WebView) findViewById(R.id.webview);
 		webView.setBackgroundColor(0x00000000);
-		webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+		//webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
 		webView.getSettings().setJavaScriptEnabled(true);
-		webView.setHorizontalScrollBarEnabled(false);
-		webView.setVerticalScrollBarEnabled(true);
+		//webView.setVerticalScrollBarEnabled(true);
+		
+		webviewIdCard = (WebView) findViewById(R.id.webviewIdCard);
+		webviewIdCard.setBackgroundColor(0x00000000);
+		webviewIdCard.getSettings().setJavaScriptEnabled(true);
+		//webviewIdCard.setHorizontalScrollBarEnabled(false);
+		//webviewIdCard.setVerticalScrollBarEnabled(true);
+		webviewIdCard.loadUrl(Constant.idCardUrl+"uid="+LLApplication.getUserId());
+		
+		//IDCard
+		//imgIdCard=(ImageView)findViewById(R.id.imageViewIdCard);
 		
 		 mgr = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
 		if (mgr != null) {
 			mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 		}
-
+		
 	}
 
+	
+	
 	PhoneStateListener phoneStateListener = new PhoneStateListener() {
 	    @Override
 	    public void onCallStateChanged(int state, String incomingNumber) {
-	        if (state == TelephonyManager.CALL_STATE_RINGING) {
-	            //Incoming call: Pause music
-	        	Log.e("TelephonyManager","CALL_STATE_RINGING");
-	        	if (txtTotalTime.getText().length() > 0) {
-					if (LLApplication.getStationLists().size() > currentStationPos) {
-						if (isOnline()) {
-							playStreaming();
-						} else {
-							Toast.makeText(getApplicationContext(),
-									"" + Constant.network_error,
-									Toast.LENGTH_SHORT).show();
+	    	if(btnPlay.getBackground().getConstantState().equals
+                    (getResources().getDrawable(R.drawable.pausebtn).getConstantState())){
+	    		if (state == TelephonyManager.CALL_STATE_RINGING) {
+		            //Incoming call: Pause music
+		        	Log.e("TelephonyManager","CALL_STATE_RINGING");
+		        	if (txtTotalTime.getText().length() > 0) {
+						if (LLApplication.getStationLists().size() > currentStationPos) {
+							if (isOnline()) {
+								playStreaming();
+							} else {
+								Toast.makeText(getApplicationContext(),
+										"" + Constant.network_error,
+										Toast.LENGTH_SHORT).show();
+							}
 						}
 					}
-				}
-	        } else if(state == TelephonyManager.CALL_STATE_IDLE) {
-	            //Not in call: Play music
-	        	Log.e("TelephonyManager","CALL_STATE_IDLE");
-	        	if (txtTotalTime.getText().length() > 0) {
-					if (LLApplication.getStationLists().size() > currentStationPos) {
-						if (isOnline()) {
-							playStreaming();
-						} else {
-							Toast.makeText(getApplicationContext(),
-									"" + Constant.network_error,
-									Toast.LENGTH_SHORT).show();
+		        } else if(state == TelephonyManager.CALL_STATE_IDLE) {
+		            //Not in call: Play music
+		        	Log.e("TelephonyManager","CALL_STATE_IDLE");
+		        	
+		        } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
+		            //A call is dialing, active or on hold
+		        	Log.e("TelephonyManager","CALL_STATE_OFFHOOK");
+		        	if (txtTotalTime.getText().length() > 0) {
+						if (LLApplication.getStationLists().size() > currentStationPos) {
+							if (isOnline()) {
+								playStreaming();
+							} else {
+								Toast.makeText(getApplicationContext(),
+										"" + Constant.network_error,
+										Toast.LENGTH_SHORT).show();
+							}
 						}
 					}
-				}
-	        } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
-	            //A call is dialing, active or on hold
-	        	Log.e("TelephonyManager","CALL_STATE_OFFHOOK");
-	        }
+		        }
+        	}
 	        super.onCallStateChanged(state, incomingNumber);
 	    }
 	};
 	
 	private void onClickEvents() {
-
-		// Listview Group click listener
-		/*
-		 * expListView.setOnGroupClickListener(new OnGroupClickListener() {
-		 * 
-		 * @Override public boolean onGroupClick(ExpandableListView parent, View
-		 * v, int groupPosition, long id) {
-		 * 
-		 * if (groupPosition == 1) { btnRadio.setVisibility(View.GONE);
-		 * webView.setVisibility(View.GONE);
-		 * linearMystations.setVisibility(View.VISIBLE);
-		 * 
-		 * slideMenuRight();
-		 * 
-		 * curPoswheel1 = 0; curPoswheel2 = 0; txtSpeakerSearch.setText("" +
-		 * arrayofspeakers.get(curPoswheel1).get("Name"));
-		 * txtSubjectSearch.setText("" +
-		 * arrayofsubjects.get(curPoswheel2).get("Name")); callmyStations(true);
-		 * 
-		 * } else if (groupPosition == 3) {
-		 * btnRadio.setVisibility(View.VISIBLE);
-		 * linearMystations.setVisibility(View.GONE);
-		 * webView.setVisibility(View.VISIBLE);
-		 * webView.loadUrl("file:///android_res/raw/help.html");
-		 * 
-		 * slideMenuRight(); } else if (groupPosition == 4) {
-		 * btnRadio.setVisibility(View.VISIBLE);
-		 * linearMystations.setVisibility(View.GONE);
-		 * webView.setVisibility(View.VISIBLE);
-		 * webView.loadUrl("file:///android_res/raw/terms.html");
-		 * 
-		 * slideMenuRight(); } else if (groupPosition == 5) {
-		 * btnRadio.setVisibility(View.VISIBLE);
-		 * linearMystations.setVisibility(View.GONE);
-		 * webView.setVisibility(View.VISIBLE);
-		 * webView.loadUrl("file:///android_res/raw/privacy.html");
-		 * 
-		 * slideMenuRight(); } else if (groupPosition == 6) {
-		 * 
-		 * Intent emailIntent = new Intent( android.content.Intent.ACTION_SEND);
-		 * emailIntent.setType("message/rfc822");
-		 * 
-		 * emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-		 * Constant.Alert_Name); emailIntent .putExtra(
-		 * android.content.Intent.EXTRA_EMAIL, new String[] {
-		 * "lifesupport@life-leadership-home.com" });
-		 * startActivity(Intent.createChooser(emailIntent, "Email:"));
-		 * 
-		 * } return false; } });
-		 */
-
-		// Listview Group expanded listener
-		expListView.setOnGroupExpandListener(new OnGroupExpandListener() {
-
-			@Override
-			public void onGroupExpand(int groupPosition) {
-				/*
-				 * Toast.makeText(getApplicationContext(),
-				 * listDataHeader.get(groupPosition) + " Expanded",
-				 * Toast.LENGTH_SHORT).show();
-				 */
-				/*
-				 * if (groupPosition != 2) { if (flag) {
-				 * expListView.collapseGroup(expandedPos); } else { flag = true;
-				 * } expandedPos = groupPosition; }
-				 */
-				/*
-				 * Toast.makeText(getApplicationContext(), "booleanClicked..",
-				 * Toast.LENGTH_SHORT).show();
-				 */
-			}
-		});
-
-		// Listview Group collasped listener
-		expListView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
-
-			@Override
-			public void onGroupCollapse(int groupPosition) {
-				// Toast.makeText(getApplicationContext(),
-				// listDataHeader.get(groupPosition) + " Collapsed",
-				// Toast.LENGTH_SHORT).show();
-
-			}
-		});
 
 		// Listview on child click listener
 		expListView.setOnChildClickListener(new OnChildClickListener() {
@@ -533,47 +501,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				}
 			}
 		});
-
-		player_btn1.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				/*
-				 * if (!booleanClicked) { booleanClicked = true; if
-				 * (currentStationPos != 0) { currentStationPos--; if
-				 * (isOnline()) { startStreamingAudio(Constant.cdnPath +
-				 * Common.getStationLists() .get(currentStationPos)
-				 * .get("FileName") + ".mp3"); playStreaming(); } } }
-				 */
-			}
-		});
-
-		player_btn2.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				/*
-				 * if (!booleanClicked) { booleanClicked = true; if
-				 * (currentStationPos != Common.getStationLists().size() - 1) {
-				 * currentStationPos++; if (isOnline()) {
-				 * startStreamingAudio(Constant.cdnPath +
-				 * Common.getStationLists() .get(currentStationPos)
-				 * .get("FileName") + ".mp3"); playStreaming(); } } }
-				 */
-			}
-		});
-
-		player_btn3.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
+		
 		player_btn4.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -592,7 +520,6 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						}
 					} else {
 						if (isOnline()) {
-							booleanFlagExpand = false;
 							RemoveStation(
 									LLApplication.getStationInfo().get(
 											"StationID"), false, -1);
@@ -611,8 +538,17 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				Log.e("MenuOut",">>>"+menuOut);
+				if(horizontalScrollView.getScrollX()!=0){
+					Log.e("MenuOut",">>>"+menuOut);
+					slideMenuRight();
+					menuOut= false;
+				}
+					
 				btnRadio.setVisibility(View.GONE);
 				webView.setVisibility(View.GONE);
+				webviewIdCard.setVisibility(View.GONE);
+				//imgIdCard.setVisibility(View.GONE);
 				relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
 				linearMystations.setVisibility(View.VISIBLE);
 				linearMystations.startAnimation(animBottomToTop);
@@ -636,13 +572,27 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			}
 		});
 
-		btnNext.setOnClickListener(new OnClickListener() {
+		btnRelativeNext.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				LLApplication.setFlagSkipCount(0);
 				PlayNextAudio();
+			}
+		});
+		
+		btnRelativeRewind.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				//Rewind Functionality
+				Log.d("relativeRewind", "click 1");
+				if(audioStreamer!=null){
+					Log.d("relativeRewind", "click 2");
+					audioStreamer.rewindAudio();
+				}
 			}
 		});
 	}
@@ -807,50 +757,58 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						e1.printStackTrace();
 					}
 
-					arrayofspeakers.clear();
+					if(array!=null){
+						arrayofspeakers.clear();
 
-					HashMap<String, String> map1 = new HashMap<String, String>();
+						HashMap<String, String> map1 = new HashMap<String, String>();
 
-					map1.put("AttrID", "0");
-					map1.put("Name", "SPEAKER SEARCH");
-					map1.put("Description", "");
-					map1.put("Type", "");
-					map1.put("Image", "");
-					map1.put("Selected", "");
-					map1.put("Primary", "");
+						map1.put("AttrID", "0");
+						map1.put("Name", "SPEAKER SEARCH");
+						map1.put("Description", "");
+						map1.put("Type", "");
+						map1.put("Image", "");
+						map1.put("Selected", "");
+						map1.put("Primary", "");
 
-					arrayofspeakers.add(map1);
+						arrayofspeakers.add(map1);
 
-					for (int i = 0; i < array.length(); i++) {
-						JSONObject obj;
-						try {
-							obj = array.getJSONObject(i);
-							HashMap<String, String> map = new HashMap<String, String>();
+						for (int i = 0; i < array.length(); i++) {
+							JSONObject obj;
+							try {
+								obj = array.getJSONObject(i);
+								HashMap<String, String> map = new HashMap<String, String>();
 
-							map.put("AttrID", "" + obj.getString("AttrID"));
-							map.put("Name", "" + obj.getString("Name"));
-							map.put("Description",
-									"" + obj.getString("Description"));
-							map.put("Type", "" + obj.getString("Type"));
-							map.put("Image", "" + obj.getString("Image"));
-							map.put("Selected", "" + obj.getString("Selected"));
-							map.put("Primary", "" + obj.getString("Primary"));
+								map.put("AttrID", "" + obj.getString("AttrID"));
+								map.put("Name", "" + obj.getString("Name"));
+								map.put("Description",
+										"" + obj.getString("Description"));
+								map.put("Type", "" + obj.getString("Type"));
+								map.put("Image", "" + obj.getString("Image"));
+								map.put("Selected", "" + obj.getString("Selected"));
+								map.put("Primary", "" + obj.getString("Primary"));
 
-							arrayofspeakers.add(map);
+								arrayofspeakers.add(map);
 
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
-					}
 
-					if (isOnline()) {
-						getSubjects();
-					} else {
+						if (isOnline()) {
+							getSubjects();
+						} else {
+							Toast.makeText(getApplicationContext(),
+									"" + Constant.network_error, Toast.LENGTH_SHORT)
+									.show();
+						}
+					}else{
 						Toast.makeText(getApplicationContext(),
-								"" + Constant.network_error, Toast.LENGTH_SHORT)
+								"Unable to Load Speakers" , Toast.LENGTH_SHORT)
 								.show();
 					}
+					
+					
 				}
 			}
 		});
@@ -955,7 +913,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				map.put("func", "getCommercials");
 
 				response = getResponse(map);
-				Log.i("response", "" + response);
+				Log.i("Commercial response", "" + response);
 				Update_getCommercials();
 			}
 		});
@@ -1036,19 +994,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		});
 	}
 
-	/*
-	 * @SuppressWarnings("unused") private void setArray() { // TODO
-	 * Auto-generated method stub arrayofspeakers.clear(); for (int i = 0; i <
-	 * array1.length; i++) { HashMap<String, String> map = new HashMap<String,
-	 * String>(); map.put("AttrID", "" + ids1[i]); map.put("Name", "" +
-	 * array1[i]); arrayofspeakers.add(map); }
-	 * 
-	 * arrayofsubjects.clear(); for (int i = 0; i < array2.length; i++) {
-	 * HashMap<String, String> map = new HashMap<String, String>();
-	 * map.put("AttrID", "" + ids2[i]); map.put("Name", "" + array2[i]);
-	 * arrayofsubjects.add(map); } }
-	 */
-
+	
 	private void callmyStations(final boolean flagPb) {
 		// TODO Auto-generated method stub
 
@@ -1072,8 +1018,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	private void getStation(boolean flagPb) {
 		// TODO Auto-generated method stub
 
-		relativeAppSection3.setVisibility(View.GONE);
-		relativeAppSection4.setVisibility(View.VISIBLE);
+		linearAppSection3.setVisibility(View.GONE);
+		linearAppSection4.setVisibility(View.VISIBLE);
 
 		if (flagPb) {
 			progressDialog = ProgressDialog.show(
@@ -1100,9 +1046,9 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 							+ arrayofsubjects.get(curPoswheel2).get("AttrID"));
 				}
 				map.put("userid", "" + LLApplication.getUserId());
-
+				Log.d("getStationMap", ">> "+map.toString());
 				response = getResponse(map);
-				Log.i("response", "" + response);
+				Log.i("response getStationMap", "" + response);
 				Update();
 			}
 		});
@@ -1189,21 +1135,6 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					int size = LLApplication.getStationLists().size();
 
 					if (size > 0) {
-						/*
-						 * int size_ =
-						 * LLApplication.getCommercialsLists().size(); for (int
-						 * i = size - 1; i >= 0; i--) { if (i != 0 && i % 4 ==
-						 * 0) { if (currentAdPos == size_) currentAdPos = 0;
-						 * LLApplication.getStationLists().add( i,
-						 * LLApplication.getCommercialsLists()
-						 * .get(currentAdPos)); currentAdPos++; } }
-						 */
-
-						/*
-						 * size = Common.getStationLists().size();
-						 * Toast.makeText(getApplicationContext(), size +
-						 * " stations available.", Toast.LENGTH_SHORT).show();
-						 */
 
 						if (isOnline()) {
 							currentStationPos = 0;
@@ -1262,8 +1193,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	private void playStreaming() {
 		// TODO Auto-generated method stub
 
-		relativeAppSection3.setVisibility(View.VISIBLE);
-		relativeAppSection4.setVisibility(View.GONE);
+		linearAppSection3.setVisibility(View.VISIBLE);
+		linearAppSection4.setVisibility(View.GONE);
 
 		if (btnPlay.isEnabled() && audioStreamer != null) {
 			try {
@@ -1305,12 +1236,14 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 	private void startAudio() {
 		// TODO Auto-generated method stub
+		if (audioStreamer != null) {
 		audioStreamer.getMediaPlayer().start();
 		audioStreamer.startPlayProgressUpdater();
 		btnPlay.setBackgroundResource(R.drawable.pausebtn);
 		// sb.setEnabled(true);
 
 		booleanClicked = false;
+		}
 	}
 
 	private void getAudioInfo() {
@@ -1551,10 +1484,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				/*
-				 * if (progressDialog.isShowing()) { progressDialog.dismiss(); }
-				 */
-
+				
 				if (response != null) {
 					if (childPosition == -1
 							|| LLApplication
@@ -1897,7 +1827,6 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				public void onClick(View arg0) {
 					// TODO Auto-generated method stub
 					if (isOnline()) {
-						booleanFlagExpand = true;
 						RemoveStation(
 								LLApplication.getFavstationLists()
 										.get(childPosition).get("StationID"),
@@ -1918,6 +1847,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					player_btn4.setVisibility(View.VISIBLE);
 					btnRadio.setVisibility(View.GONE);
 					webView.setVisibility(View.GONE);
+					webviewIdCard.setVisibility(View.GONE);
 					relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
 					linearMystations.setVisibility(View.VISIBLE);
 
@@ -2010,6 +1940,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					if (groupPosition == 0) {
 						btnRadio.setVisibility(View.GONE);
 						webView.setVisibility(View.GONE);
+						webviewIdCard.setVisibility(View.GONE);
 						relativeTop.setBackgroundColor(Color
 								.parseColor("#D22129"));
 						linearMystations.setVisibility(View.VISIBLE);
@@ -2019,6 +1950,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						player_btn4.setVisibility(View.GONE);
 						btnRadio.setVisibility(View.GONE);
 						webView.setVisibility(View.GONE);
+						webviewIdCard.setVisibility(View.GONE);
 						relativeTop.setBackgroundColor(Color
 								.parseColor("#D22129"));
 						linearMystations.setVisibility(View.VISIBLE);
@@ -2039,6 +1971,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						player_btn4.setVisibility(View.GONE);
 						btnRadio.setVisibility(View.GONE);
 						webView.setVisibility(View.GONE);
+						webviewIdCard.setVisibility(View.GONE);
 						relativeTop.setBackgroundColor(Color
 								.parseColor("#D22129"));
 						linearMystations.setVisibility(View.VISIBLE);
@@ -2063,6 +1996,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						btnRadio.setVisibility(View.VISIBLE);
 						linearMystations.setVisibility(View.GONE);
 						webView.setVisibility(View.VISIBLE);
+						webviewIdCard.setVisibility(View.GONE);
 						relativeTop.setBackgroundColor(Color
 								.parseColor("#B8B8B8"));
 						webView.loadUrl("file:///android_res/raw/help.html");
@@ -2072,6 +2006,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						btnRadio.setVisibility(View.VISIBLE);
 						linearMystations.setVisibility(View.GONE);
 						webView.setVisibility(View.VISIBLE);
+						webviewIdCard.setVisibility(View.GONE);
 						relativeTop.setBackgroundColor(Color
 								.parseColor("#B8B8B8"));
 						webView.loadUrl("file:///android_res/raw/terms.html");
@@ -2081,12 +2016,24 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						btnRadio.setVisibility(View.VISIBLE);
 						linearMystations.setVisibility(View.GONE);
 						webView.setVisibility(View.VISIBLE);
+						webviewIdCard.setVisibility(View.GONE);
 						relativeTop.setBackgroundColor(Color
 								.parseColor("#B8B8B8"));
 						webView.loadUrl("file:///android_res/raw/privacy.html");
 
 						slideMenuRight();
 					} else if (groupPosition == 6) {
+
+						btnRadio.setVisibility(View.VISIBLE);
+						linearMystations.setVisibility(View.GONE);
+						webView.setVisibility(View.GONE);
+						webviewIdCard.setVisibility(View.VISIBLE);
+						
+						relativeTop.setBackgroundColor(Color
+								.parseColor("#B8B8B8"));
+						
+						slideMenuRight();
+					} else if (groupPosition == 7) {
 
 						Intent emailIntent = new Intent(
 								android.content.Intent.ACTION_SEND);
@@ -2102,7 +2049,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						startActivity(Intent.createChooser(emailIntent,
 								"Email:"));
 
-					} else if (groupPosition == 7) {
+					} else if (groupPosition == 8) {
 						AlertDialog.Builder alert = new AlertDialog.Builder(
 								mContext);
 						alert.setTitle(Constant.Alert_Name);
@@ -2195,6 +2142,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		listDataHeader.add("HELP");
 		listDataHeader.add("TERMS");
 		listDataHeader.add("PRIVACY");
+		listDataHeader.add("ID Card");
 		listDataHeader.add("CONTACT");
 		listDataHeader.add("Logout");
 
@@ -2206,6 +2154,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		listImgs.add(R.drawable.terms);
 		listImgs.add(R.drawable.privacy);
 		listImgs.add(R.drawable.contact);
+		listImgs.add(R.drawable.contact);
 		listImgs.add(R.drawable.logout);
 
 		// Adding child data
@@ -2216,16 +2165,15 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 		mapDataChild.put(listDataHeader.get(0), dummy); // Header, Child data
 		mapDataChild.put(listDataHeader.get(1), dummy);
-		mapDataChild.put(listDataHeader.get(2),
-				LLApplication.getFavstationLists());
+		mapDataChild.put(listDataHeader.get(2),	LLApplication.getFavstationLists());
 		mapDataChild.put(listDataHeader.get(3), dummy);
 		mapDataChild.put(listDataHeader.get(4), dummy);
 		mapDataChild.put(listDataHeader.get(5), dummy);
 		mapDataChild.put(listDataHeader.get(6), dummy);
 		mapDataChild.put(listDataHeader.get(7), dummy);
-
-		listAdapter = new ExpandableListAdapter(this, listDataHeader, listImgs,
-				mapDataChild);
+		mapDataChild.put(listDataHeader.get(8), dummy);
+		
+		listAdapter = new ExpandableListAdapter(this, listDataHeader, listImgs,	mapDataChild);
 
 		// setting list adapter
 		expListView.setAdapter(listAdapter);
@@ -2316,8 +2264,6 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
 		// TODO Auto-generated method stub
-		// Toast.makeText(getApplicationContext(), "method called..",
-		// Toast.LENGTH_SHORT).show();
 
 		try {
 			if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
@@ -2327,20 +2273,15 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 
 				slideMenuLeft();
-				// Toast.makeText(getApplicationContext(), "Left Swipe",
-				// Toast.LENGTH_SHORT).show();
 			} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
 					&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 
 				slideMenuRight();
-				// Toast.makeText(getApplicationContext(), "Right Swipe",
-				// Toast.LENGTH_SHORT).show();
 			}
 
 		} catch (Exception e) {
 			// nothing
-			// Toast.makeText(getApplicationContext(), "Catch Swipe",
-			// Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
 		}
 
 		return true;
@@ -2405,6 +2346,5 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		Log.i("leftSwipe", "" + menuOut);
 		menuOut = !menuOut;
 	}
-	
 	
 }

@@ -24,16 +24,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.rmrdevelopment.lifeleadership.LLApplication;
 import com.rmrdevelopment.lifeleadership.R;
 import com.rmrdevelopment.lifeleadership.util.Constant;
 
 public class LoginActivity extends BaseActivity {
 
-	Button btnSubmit;
-	EditText editUsername, editPass;
-	ToggleButton btnRememberOnOff;
-	TextView txtForgotpass,txtlogin;
+	private Button btnSubmit;
+	
+	private EditText editUsername;
+	private EditText editPass;
+	
+	private ToggleButton btnRememberOnOff;
+	
+	private TextView txtForgotpass;
+	private TextView txtlogin;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +51,20 @@ public class LoginActivity extends BaseActivity {
 		init();
 		clickEvents();
 
+	}
+	
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this); 
 	}
 
 	private void init() {
@@ -125,11 +145,6 @@ public class LoginActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				/*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri
-						.parse("" + Constant.forgotPass_Link));
-				startActivity(browserIntent);
-				overridePendingTransition(R.anim.enter_from_bottom,
-						R.anim.hold_bottom);*/
 				
 				Intent browserIntent = new Intent(LoginActivity.this,ForgotPassword.class);
 				startActivity(browserIntent);
@@ -257,11 +272,13 @@ public class LoginActivity extends BaseActivity {
 								.setPassword(editPass.getText().toString());
 						LLApplication.setUserloggedin(1);
 
-						Log.i("login rem..", "" + btnRememberOnOff.isChecked());
-						if (btnRememberOnOff.isChecked()) {
-							LLApplication.setRemember(1);
-						} else {
-							LLApplication.setRemember(0);
+						//Log.i("login rem..", "" + btnRememberOnOff.isChecked());
+						if(btnRememberOnOff!=null){
+							if (btnRememberOnOff.isChecked()) {
+								LLApplication.setRemember(1);
+							} else {
+								LLApplication.setRemember(0);
+							}
 						}
 
 						ContentValues values = new ContentValues();

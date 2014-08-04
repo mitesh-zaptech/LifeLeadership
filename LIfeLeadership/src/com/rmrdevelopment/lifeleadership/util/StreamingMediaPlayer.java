@@ -11,9 +11,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 
+import wseemann.media.FFmpegMediaMetadataRetriever;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
@@ -46,7 +46,7 @@ public class StreamingMediaPlayer {
 	// Create Handler to call View updates on the main UI thread.
 	private final Handler handler = new Handler();
 
-	private MediaPlayer mediaPlayer;
+	public MediaPlayer mediaPlayer;
 
 	private File downloadingMediaFile;
 
@@ -96,82 +96,99 @@ public class StreamingMediaPlayer {
 	 * Download the url stream to a temporary location and then call the
 	 * setDataSource for that local file
 	 */
-	@SuppressWarnings("resource")
 	@SuppressLint("NewApi")
 	public void downloadAudioIncrement(String mediaUrl) throws IOException {
 
 		// ****** get Total Time ************************//
-		MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+		FFmpegMediaMetadataRetriever retriever = new FFmpegMediaMetadataRetriever();
+		//MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
 		Log.i("mediaUrl", "" + mediaUrl);
 		// retriever.setDataSource(mediaUrl);
 
-		if (Build.VERSION.SDK_INT >= 14)
-			retriever.setDataSource(mediaUrl, new HashMap<String, String>());
-		else
-			retriever.setDataSource(mediaUrl);
+		
+		if (Build.VERSION.SDK_INT >= 14){
+			try {
+				retriever.setDataSource(mediaUrl, new HashMap<String, String>());
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+		}			
+		else{
+			try {
+				retriever.setDataSource(mediaUrl);
+			}catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+		}
+			
 
 		String time = retriever
-				.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-		long timeInmillisec = Long.parseLong(time);
-		long duration = timeInmillisec / 1000;
-		long hours = duration / 3600;
-		long minutes = (duration - hours * 3600) / 60;
-		long seconds = duration - (hours * 3600 + minutes * 60);
+				.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION);
+		if(time!=null && time.trim().length()>0){
+			long timeInmillisec = Long.parseLong(time);
+			long duration = timeInmillisec / 1000;
+			long hours = duration / 3600;
+			long minutes = (duration - hours * 3600) / 60;
+			long seconds = duration - (hours * 3600 + minutes * 60);
 
-		progressBar.setMax((int) duration);
-		if (hours > 0)
-			LLApplication.setTotalTime(String.format("%02d", hours) + ":"
-					+ String.format("%02d", minutes) + ":"
-					+ String.format("%02d", seconds));
-		else
-			LLApplication.setTotalTime(String.format("%02d", minutes) + ":"
-					+ String.format("%02d", seconds));
-		// ****************************************** //
+			progressBar.setMax((int) duration);
+			if (hours > 0)
+				LLApplication.setTotalTime(String.format("%02d", hours) + ":"
+						+ String.format("%02d", minutes) + ":"
+						+ String.format("%02d", seconds));
+			else
+				LLApplication.setTotalTime(String.format("%02d", minutes) + ":"
+						+ String.format("%02d", seconds));
+			// ****************************************** //
 
-		URLConnection cn = new URL(mediaUrl).openConnection();
-		cn.connect();
-		InputStream stream = cn.getInputStream();
-		if (stream == null) {
-			Log.e(getClass().getName(),
-					"Unable to create InputStream for mediaUrl:" + mediaUrl);
+			URLConnection cn = new URL(mediaUrl).openConnection();
+			cn.connect();
+			InputStream stream = cn.getInputStream();
+			if (stream == null) {
+				Log.e(getClass().getName(),
+						"Unable to create InputStream for mediaUrl:" + mediaUrl);
+			}
+
+			downloadingMediaFile = new File(context.getCacheDir(),
+					"downloadingMedia.dat");
+
+			// Just in case a prior deletion failed because our code crashed or
+			// something, we also delete any previously
+			// downloaded file to ensure we start fresh. If you use this code,
+			// always delete
+			// no longer used downloads else you'll quickly fill up your hard disk
+			// memory. Of course, you can also
+			// store any previously downloaded file in a separate data cache for
+			// instant replay if you wanted as well.
+			if (downloadingMediaFile.exists()) {
+				downloadingMediaFile.delete();
+			}
+
+			FileOutputStream out = new FileOutputStream(downloadingMediaFile);
+			byte buf[] = new byte[16384];
+			@SuppressWarnings("unused")
+			int totalBytesRead = 0, incrementalBytesRead = 0;
+			do {
+				int numread = stream.read(buf);
+				if (numread <= 0)
+					break;
+				out.write(buf, 0, numread);
+				totalBytesRead += numread;
+				incrementalBytesRead += numread;
+				totalKbRead = totalBytesRead / 1000;
+
+				testMediaBuffer();
+				fireDataLoadUpdate();
+			} while (validateNotInterrupted());
+			stream.close();
+			if (validateNotInterrupted()) {
+				fireDataFullyLoaded();
+			}
 		}
-
-		downloadingMediaFile = new File(context.getCacheDir(),
-				"downloadingMedia.dat");
-
-		// Just in case a prior deletion failed because our code crashed or
-		// something, we also delete any previously
-		// downloaded file to ensure we start fresh. If you use this code,
-		// always delete
-		// no longer used downloads else you'll quickly fill up your hard disk
-		// memory. Of course, you can also
-		// store any previously downloaded file in a separate data cache for
-		// instant replay if you wanted as well.
-		if (downloadingMediaFile.exists()) {
-			downloadingMediaFile.delete();
-		}
-
-		FileOutputStream out = new FileOutputStream(downloadingMediaFile);
-		byte buf[] = new byte[16384];
-		@SuppressWarnings("unused")
-		int totalBytesRead = 0, incrementalBytesRead = 0;
-		do {
-			int numread = stream.read(buf);
-			if (numread <= 0)
-				break;
-			out.write(buf, 0, numread);
-			totalBytesRead += numread;
-			incrementalBytesRead += numread;
-			totalKbRead = totalBytesRead / 1000;
-
-			testMediaBuffer();
-			fireDataLoadUpdate();
-		} while (validateNotInterrupted());
-		stream.close();
-		if (validateNotInterrupted()) {
-			fireDataFullyLoaded();
-		}
+		
 	}
 
 	private boolean validateNotInterrupted() {
@@ -256,7 +273,6 @@ public class StreamingMediaPlayer {
 		}
 	}
 
-	@SuppressWarnings("resource")
 	private MediaPlayer createMediaPlayer(File mediaFile) throws IOException {
 		MediaPlayer mPlayer = new MediaPlayer();
 		mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -403,7 +419,6 @@ public class StreamingMediaPlayer {
 			BufferedOutputStream writer = new BufferedOutputStream(
 					new FileOutputStream(newLocation, false));
 			try {
-				// byte[] buff = new byte[8192];
 				/* changing the size of the buffer */
 
 				byte[] buff = new byte[16384];
@@ -436,6 +451,41 @@ public class StreamingMediaPlayer {
 							+ newLocation.getPath());
 		}
 	}
+	
+	public void rewindAudio(){
+		Log.d("rewindAudio", "1");
+		if(mediaPlayer!=null){
+			Log.d("rewindAudio", "2");
+			int durationInMillis = mediaPlayer.getDuration();
+			int curPos = mediaPlayer.getCurrentPosition();
+			if(durationInMillis> (30*1000) && curPos>=(30*1000)){
+				mediaPlayer.seekTo(curPos - (30*1000));
+				
+				curPos = mediaPlayer.getCurrentPosition();
+				
+				final int HOUR = 60 * 60 * 1000;
+				final int MINUTE = 60 * 1000;
+				final int SECOND = 1000;
+				
+				int currentHour = curPos / HOUR;
+				int currentMint = (curPos % HOUR) / MINUTE;
+				int currentSec = (curPos % MINUTE) / SECOND;
+				
+				String leftTime;
+				if (currentHour > 0)
+					leftTime = String.format("%02d", currentHour) + ":"
+							+ String.format("%02d", currentMint) + ":"
+							+ String.format("%02d", currentSec);
+				else
+					leftTime = String.format("%02d", currentMint) + ":"
+							+ String.format("%02d", currentSec);
+				textStreamed.setText(leftTime);
+				progressBar.setProgress(curPos / 1000);
+				Log.d("rewindAudio", "3");
+			}
+			
+		}
+	} 
 
 	private void calculateTime() {
 		// TODO Auto-generated method stub
@@ -446,12 +496,6 @@ public class StreamingMediaPlayer {
 		@SuppressWarnings("unused")
 		int durationInMillis = mediaPlayer.getDuration();
 		int curVolume = mediaPlayer.getCurrentPosition();
-
-		/*
-		 * int durationHour = durationInMillis / HOUR; int durationMint =
-		 * (durationInMillis % HOUR) / MINUTE; int durationSec =
-		 * (durationInMillis % MINUTE) / SECOND;
-		 */
 
 		int currentHour = curVolume / HOUR;
 		int currentMint = (curVolume % HOUR) / MINUTE;
@@ -474,7 +518,5 @@ public class StreamingMediaPlayer {
 			LLApplication.setFlagSkipCount(1);
 			LifeLeadershipMainActivity.lifeObj.PlayNextAudio();
 		}
-		
-
 	}
 }

@@ -208,15 +208,7 @@
                     android:layout_height="75dp"
                     android:layout_centerInParent="true"
                     android:background="@drawable/background_mdpi" >
-
-                    <Button
-                        android:id="@+id/like"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="5dp"
-                        android:background="@drawable/like" />
-
+					
                     <Button
                         android:id="@+id/play"
                         android:layout_width="wrap_content"
@@ -243,18 +235,45 @@
                             android:text="5"
                             android:textColor="#D22129" />
                     </RelativeLayout>
+                    <RelativeLayout
+                        android:id="@+id/layoutRewind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="5dp"
+                        >
+
+                        <TextView
+                            android:id="@+id/rewind"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/rewind" />
+
+                        <TextView
+                            android:id="@+id/txtRewind"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignRight="@+id/rewind"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="8dp"
+                            android:text="30"
+                            android:textColor="#D22129" />
+                    </RelativeLayout>
+                    
                 </RelativeLayout>
 
                 <Button
-                    android:id="@+id/playerbtn3"
+                    android:id="@+id/like"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:layout_toLeftOf="@+id/controller"
-                    android:background="@drawable/player_btn_2"
-                    android:visibility="gone" />
+                    android:background="@drawable/like"
+                    android:visibility="visible" />
 
                 <Button
                     android:id="@+id/player_btn4"
@@ -400,7 +419,19 @@
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
-
+    
+   
+	<WebView
+        android:id="@+id/webviewIdCard"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top"
+        android:layout_margin="5dp"
+        android:cacheColorHint="#00000000"
+        android:scrollbarAlwaysDrawHorizontalTrack="false"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:visibility="gone" />
+	
     <WebView
         android:id="@+id/webview"
         android:layout_width="fill_parent"

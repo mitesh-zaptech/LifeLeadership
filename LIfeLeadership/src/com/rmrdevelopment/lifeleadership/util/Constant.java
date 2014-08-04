@@ -3,6 +3,7 @@ package com.rmrdevelopment.lifeleadership.util;
 
 public class Constant {
 
+	public static String idCardUrl = "http://lifeapp.rmrdevelopment.com/DesktopModules/Life_IDCard/Card.aspx?";
 	public static final String Alert_Name = "Life Leadership";
 	public static String appPath="https://lifeapp.rmrdevelopment.com/DesktopModules/RascalRadio/RascalRadio.aspx?ssl=true";
 	public static String cdnPath ="http://static.the-team.net/fms/webinars/rascalradio/";

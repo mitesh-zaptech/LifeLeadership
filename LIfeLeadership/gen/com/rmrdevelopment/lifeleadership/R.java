@@ -24,6 +24,14 @@ public final class R {
     }
     public static final class attr {
     }
+    public static final class bool {
+        /** Enable automatic activity tracking
+         */
+        public static final int ga_autoActivityTracking=0x7f070000;
+        /** Enable automatic exception tracking
+         */
+        public static final int ga_reportUncaughtExceptions=0x7f070001;
+    }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
 
@@ -31,8 +39,8 @@ public final class R {
          screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
     
          */
-        public static final int activity_horizontal_margin=0x7f060000;
-        public static final int activity_vertical_margin=0x7f060001;
+        public static final int activity_horizontal_margin=0x7f090000;
+        public static final int activity_vertical_margin=0x7f090001;
     }
     public static final class drawable {
         public static final int addcoments=0x7f020000;
@@ -90,88 +98,95 @@ public final class R {
         public static final int rascal_splash_320x480=0x7f020034;
         public static final int rascal_splash_640x1136=0x7f020035;
         public static final int rascal_splash_720=0x7f020036;
-        public static final int select_station=0x7f020037;
-        public static final int shuffle=0x7f020038;
-        public static final int speakersearch=0x7f020039;
-        public static final int splashscreen=0x7f02003a;
-        public static final int subjectsearch=0x7f02003b;
-        public static final int submit_btn=0x7f02003c;
-        public static final int terms=0x7f02003d;
-        public static final int track=0x7f02003e;
-        public static final int track_new=0x7f02003f;
-        public static final int vedio=0x7f020040;
-        public static final int vedio_gallary=0x7f020041;
-        public static final int vedio_image=0x7f020042;
-        public static final int waves=0x7f020043;
-        public static final int wheel_bg=0x7f020044;
-        public static final int wheel_val=0x7f020045;
+        public static final int rewind=0x7f020037;
+        public static final int select_station=0x7f020038;
+        public static final int shuffle=0x7f020039;
+        public static final int speakersearch=0x7f02003a;
+        public static final int splashscreen=0x7f02003b;
+        public static final int subjectsearch=0x7f02003c;
+        public static final int submit_btn=0x7f02003d;
+        public static final int terms=0x7f02003e;
+        public static final int track=0x7f02003f;
+        public static final int track_new=0x7f020040;
+        public static final int vedio=0x7f020041;
+        public static final int vedio_gallary=0x7f020042;
+        public static final int vedio_image=0x7f020043;
+        public static final int waves=0x7f020044;
+        public static final int wheel_bg=0x7f020045;
+        public static final int wheel_val=0x7f020046;
     }
     public static final class id {
-        public static final int action_settings=0x7f0a0040;
-        public static final int artist=0x7f0a001e;
-        public static final int bottom=0x7f0a0021;
-        public static final int btnSubmitLogin=0x7f0a0038;
-        public static final int buttonSlide=0x7f0a0004;
-        public static final int cancel=0x7f0a0022;
-        public static final int controller=0x7f0a0011;
-        public static final int country_name=0x7f0a003f;
-        public static final int delete=0x7f0a002a;
-        public static final int done=0x7f0a0023;
-        public static final int editTextPassword=0x7f0a0031;
-        public static final int editTextUserName=0x7f0a002d;
-        public static final int forgotpass=0x7f0a0039;
-        public static final int imageView1=0x7f0a003a;
-        public static final int imageView2=0x7f0a0003;
-        public static final int imageView3=0x7f0a0026;
-        public static final int imageViewQuestionPassword=0x7f0a0034;
-        public static final int imageViewQuestionUsername=0x7f0a0030;
-        public static final int img=0x7f0a0028;
-        public static final int layout1=0x7f0a002e;
-        public static final int layout2=0x7f0a0032;
-        public static final int layout3=0x7f0a0035;
-        public static final int lblListHeader=0x7f0a0027;
-        public static final int lblListItem=0x7f0a0029;
-        public static final int like=0x7f0a0012;
-        public static final int lst=0x7f0a003b;
-        public static final int mystations=0x7f0a0006;
-        public static final int next=0x7f0a0014;
-        public static final int play=0x7f0a0013;
-        public static final int player_btn1=0x7f0a000d;
-        public static final int player_btn2=0x7f0a0010;
-        public static final int player_btn4=0x7f0a0017;
-        public static final int playerbtn3=0x7f0a0016;
-        public static final int progressBar1=0x7f0a0019;
-        public static final int radiobtn=0x7f0a0005;
-        public static final int relativeApp=0x7f0a0000;
-        public static final int relativeAppSection1=0x7f0a0007;
-        public static final int relativeAppSection2=0x7f0a000c;
-        public static final int relativeAppSection3=0x7f0a001b;
-        public static final int relativeAppSection4=0x7f0a001f;
-        public static final int relativeMainLogin=0x7f0a002b;
-        public static final int relativeSpeakerSearch=0x7f0a0008;
-        public static final int relativeSubjectSearch=0x7f0a000a;
-        public static final int relativeTop=0x7f0a0025;
-        public static final int relative_likedaudios=0x7f0a003c;
-        public static final int select_station=0x7f0a000e;
-        public static final int speaker_search=0x7f0a0009;
-        public static final int stationname=0x7f0a000f;
-        public static final int subject_search=0x7f0a000b;
-        public static final int text=0x7f0a003d;
-        public static final int textView1=0x7f0a002f;
-        public static final int textView2=0x7f0a0033;
-        public static final int textViewLoginTitle=0x7f0a002c;
-        public static final int textViewRememberTitle=0x7f0a0036;
-        public static final int thumg_img=0x7f0a001c;
-        public static final int time1=0x7f0a0018;
-        public static final int time2=0x7f0a001a;
-        public static final int title=0x7f0a001d;
-        public static final int toggleButtonRememberButton=0x7f0a0037;
-        public static final int top=0x7f0a0001;
-        public static final int txtNext=0x7f0a0015;
-        public static final int view1=0x7f0a003e;
-        public static final int view2=0x7f0a0002;
-        public static final int webview=0x7f0a0020;
-        public static final int wheel1=0x7f0a0024;
+        public static final int action_settings=0x7f0c0043;
+        public static final int artist=0x7f0c0020;
+        public static final int bottom=0x7f0c0024;
+        public static final int btnSubmitLogin=0x7f0c003b;
+        public static final int buttonSlide=0x7f0c0004;
+        public static final int cancel=0x7f0c0025;
+        public static final int controller=0x7f0c0011;
+        public static final int country_name=0x7f0c0042;
+        public static final int delete=0x7f0c002d;
+        public static final int done=0x7f0c0026;
+        public static final int editTextPassword=0x7f0c0034;
+        public static final int editTextUserName=0x7f0c0030;
+        public static final int forgotpass=0x7f0c003c;
+        public static final int imageView1=0x7f0c003d;
+        public static final int imageView2=0x7f0c0003;
+        public static final int imageView3=0x7f0c0029;
+        public static final int imageViewQuestionPassword=0x7f0c0037;
+        public static final int imageViewQuestionUsername=0x7f0c0033;
+        public static final int img=0x7f0c002b;
+        public static final int layout1=0x7f0c0031;
+        public static final int layout2=0x7f0c0035;
+        public static final int layout3=0x7f0c0038;
+        public static final int layoutRewind=0x7f0c0015;
+        public static final int lblListHeader=0x7f0c002a;
+        public static final int lblListItem=0x7f0c002c;
+        public static final int like=0x7f0c0018;
+        public static final int lst=0x7f0c003e;
+        public static final int mystations=0x7f0c0006;
+        public static final int next=0x7f0c0013;
+        public static final int play=0x7f0c0012;
+        public static final int player_btn1=0x7f0c000d;
+        public static final int player_btn2=0x7f0c0010;
+        public static final int player_btn4=0x7f0c0019;
+        public static final int progressBar1=0x7f0c001b;
+        public static final int radiobtn=0x7f0c0005;
+        public static final int relativeApp=0x7f0c0000;
+        public static final int relativeAppSection1=0x7f0c0007;
+        public static final int relativeAppSection2=0x7f0c000c;
+        public static final int relativeAppSection3=0x7f0c001d;
+        public static final int relativeAppSection4=0x7f0c0021;
+        public static final int relativeMainLogin=0x7f0c002e;
+        public static final int relativeSpeakerSearch=0x7f0c0008;
+        public static final int relativeSubjectSearch=0x7f0c000a;
+        public static final int relativeTop=0x7f0c0028;
+        public static final int relative_likedaudios=0x7f0c003f;
+        public static final int rewind=0x7f0c0016;
+        public static final int select_station=0x7f0c000e;
+        public static final int speaker_search=0x7f0c0009;
+        public static final int stationname=0x7f0c000f;
+        public static final int subject_search=0x7f0c000b;
+        public static final int text=0x7f0c0040;
+        public static final int textView1=0x7f0c0032;
+        public static final int textView2=0x7f0c0036;
+        public static final int textViewLoginTitle=0x7f0c002f;
+        public static final int textViewRememberTitle=0x7f0c0039;
+        public static final int thumg_img=0x7f0c001e;
+        public static final int time1=0x7f0c001a;
+        public static final int time2=0x7f0c001c;
+        public static final int title=0x7f0c001f;
+        public static final int toggleButtonRememberButton=0x7f0c003a;
+        public static final int top=0x7f0c0001;
+        public static final int txtNext=0x7f0c0014;
+        public static final int txtRewind=0x7f0c0017;
+        public static final int view1=0x7f0c0041;
+        public static final int view2=0x7f0c0002;
+        public static final int webview=0x7f0c0023;
+        public static final int webviewIdCard=0x7f0c0022;
+        public static final int wheel1=0x7f0c0027;
+    }
+    public static final class integer {
+        public static final int ga_sessionTimeout=0x7f080000;
     }
     public static final class layout {
         public static final int activity_life_leadership_main=0x7f030000;
@@ -187,7 +202,7 @@ public final class R {
         public static final int wheel1_layout=0x7f03000a;
     }
     public static final class menu {
-        public static final int life_leadership_main=0x7f090000;
+        public static final int life_leadership_main=0x7f0b0000;
     }
     public static final class raw {
         public static final int help=0x7f050000;
@@ -196,9 +211,12 @@ public final class R {
         public static final int terms=0x7f050003;
     }
     public static final class string {
-        public static final int action_settings=0x7f070001;
-        public static final int app_name=0x7f070000;
-        public static final int hello_world=0x7f070002;
+        public static final int action_settings=0x7f060002;
+        public static final int app_name=0x7f060001;
+        /** Replace placeholder ID with your tracking ID
+         */
+        public static final int ga_trackingId=0x7f060000;
+        public static final int hello_world=0x7f060003;
     }
     public static final class style {
         /** 
@@ -222,11 +240,11 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f080000;
+        public static final int AppBaseTheme=0x7f0a0000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f080001;
-        public static final int generalnotitle=0x7f080002;
+        public static final int AppTheme=0x7f0a0001;
+        public static final int generalnotitle=0x7f0a0002;
     }
 }

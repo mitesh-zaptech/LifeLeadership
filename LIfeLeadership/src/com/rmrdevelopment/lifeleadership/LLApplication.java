@@ -51,10 +51,10 @@ public class LLApplication extends Application {
 		return CommercialsLists;
 	}
 
-	public static void setCommercialsLists(
+	/*public static void setCommercialsLists(
 			ArrayList<HashMap<String, String>> commercialsLists) {
 		CommercialsLists = commercialsLists;
-	}
+	}*/
 
 	public static String getTotalTime() {
 		return totalTime;

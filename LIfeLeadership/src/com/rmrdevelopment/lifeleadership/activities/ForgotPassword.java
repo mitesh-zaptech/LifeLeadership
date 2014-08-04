@@ -2,12 +2,15 @@ package com.rmrdevelopment.lifeleadership.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.rmrdevelopment.lifeleadership.R;
 import com.rmrdevelopment.lifeleadership.util.Constant;
 
@@ -26,7 +29,6 @@ public class ForgotPassword extends Activity {
 		// WebView:
 		webView = (WebView) findViewById(R.id.webview);
 		webView.setBackgroundColor(0x00000000);
-		webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setHorizontalScrollBarEnabled(false);
 		webView.setVerticalScrollBarEnabled(true);
@@ -43,6 +45,36 @@ public class ForgotPassword extends Activity {
 						R.anim.exit_in_bottom);
 			}
 		});
+		
+		webView.setWebViewClient(new WebViewClient(){
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				// TODO Auto-generated method stub
+				view.loadUrl(url);
+				return true;
+			}
+		});
+		
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);finish();
+	}
+	
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this); 
 	}
 
 	@Override

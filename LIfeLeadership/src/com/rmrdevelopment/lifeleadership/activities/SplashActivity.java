@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Window;
 
 import com.crittercism.app.Crittercism;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.rmrdevelopment.lifeleadership.LLApplication;
 import com.rmrdevelopment.lifeleadership.R;
 import com.rmrdevelopment.lifeleadership.SQLiteHelper;
@@ -16,7 +17,7 @@ public class SplashActivity extends Activity {
 
 	//public static DataBaseManager db;
 	
-	SQLiteHelper helper;
+	private SQLiteHelper helper;
 	public static SQLiteDatabase db = null;
 	
 
@@ -88,6 +89,20 @@ public class SplashActivity extends Activity {
 			}
 		}.start();
 
+	}
+	
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this); 
 	}
 
 	@Override
