@@ -81,6 +81,8 @@
                 android:id="@+id/relativeSpeakerSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/btn_blank" >
 
@@ -103,6 +105,8 @@
                 android:id="@+id/relativeSubjectSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/btn_blank" >
 

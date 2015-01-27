@@ -1,7 +1,5 @@
 package com.rmrdevelopment.lifeleadership.activities;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,15 +50,10 @@ public class BaseActivity extends Activity{
 		String URL;
 		URL=Constant.appPath;
 
+
 		for (Map.Entry<String, String> mapp : map.entrySet()) {
 			String key = mapp.getKey();
 			String value = mapp.getValue();
-			try {
-				value = URLEncoder.encode(value, "utf-8");
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			URL+="&"+key+"="+value;
 		}
 
@@ -68,10 +61,7 @@ public class BaseActivity extends Activity{
 		try
 		{
 			// Create Request to server and get response
-			
-			Log.e("Encoded Url ->", "URL"+URL);
 			HttpGet httpget = new HttpGet(URL);
-			
 			ResponseHandler<String> responseHandler = new BasicResponseHandler();
 			SetServerString = Client.execute(httpget, responseHandler);
 
