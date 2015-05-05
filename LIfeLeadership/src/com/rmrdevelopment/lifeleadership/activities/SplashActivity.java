@@ -3,7 +3,6 @@ package com.rmrdevelopment.lifeleadership.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Window;
 
@@ -12,13 +11,13 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.rmrdevelopment.lifeleadership.LLApplication;
 import com.rmrdevelopment.lifeleadership.R;
 import com.rmrdevelopment.lifeleadership.SQLiteHelper;
+import com.rmrdevelopment.lifeleadership.util.Constant;
 
 public class SplashActivity extends Activity {
 
 	//public static DataBaseManager db;
 	
 	private SQLiteHelper helper;
-	public static SQLiteDatabase db = null;
 	
 
 	@Override
@@ -31,7 +30,7 @@ public class SplashActivity extends Activity {
 		
 		helper = new SQLiteHelper(this, "lifeleadership.sqlite");
 		helper.createDatabase();
-		db = helper.openDatabase();
+		Constant.db = helper.openDatabase();
 
 		//db = DataBaseManager.getDBAdapterInstance(getApplicationContext());
 		Crittercism.initialize(getApplicationContext(), "52c68f1de432f5310b000009");
@@ -46,7 +45,7 @@ public class SplashActivity extends Activity {
 					}
 				} catch (InterruptedException e) {
 				} finally {
-					Cursor crsr = db.rawQuery("select * from user", null);
+					Cursor crsr = Constant.db.rawQuery("select * from user", null);
 					if (crsr != null) {
 						if (crsr.getCount() > 0) {
 							crsr.moveToFirst();

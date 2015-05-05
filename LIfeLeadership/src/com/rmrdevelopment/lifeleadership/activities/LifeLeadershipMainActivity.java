@@ -155,6 +155,10 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	private int curPoswheel1 = 0;
 	private int curPoswheel2 = 0;
 	private int curSelectedwheel = 0;
+	
+	// new for Subscription
+	private int selectedFavPos = -1;
+	private boolean iSFavSelected = false;
 
 	private ArrayList<HashMap<String, String>> arrayofspeakers = new ArrayList<HashMap<String, String>>();
 	private ArrayList<HashMap<String, String>> arrayofsubjects = new ArrayList<HashMap<String, String>>();
@@ -185,8 +189,14 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
+		if(progressDialog!=null){ //new 
+			if(progressDialog.isShowing()){
+				progressDialog.dismiss();
+			}
+		}
 		EasyTracker.getInstance(this).activityStop(this); 
 	}
+	
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -444,31 +454,38 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				if (curSelectedwheel == 0) {
-					curPoswheel1 = wheelSelectSpeaker.getCurrentItem();
-					txtSpeakerSearch.setText(""
-							+ arrayofspeakers.get(curPoswheel1).get("Name"));
-				} else {
-					curPoswheel2 = wheelSelectSpeaker.getCurrentItem();
-					txtSubjectSearch.setText(""
-							+ arrayofsubjects.get(curPoswheel2).get("Name"));
+				if(arrayofspeakers.size()>0 && arrayofsubjects.size()>0){// new
+					if (curSelectedwheel == 0) {
+						curPoswheel1 = wheelSelectSpeaker.getCurrentItem();
+						txtSpeakerSearch.setText(""
+								+ arrayofspeakers.get(curPoswheel1).get("Name"));
+					} else {
+						curPoswheel2 = wheelSelectSpeaker.getCurrentItem();
+						txtSubjectSearch.setText(""
+								+ arrayofsubjects.get(curPoswheel2).get("Name"));
+					}
+					// new Subscription - replaced == with <=
+					if (curPoswheel1 <= -1)
+						curPoswheel1 = 0;
+					if (curPoswheel2 <= -1)
+						curPoswheel2 = 0;
+
+					if (curPoswheel1 == 0 && curPoswheel2 == 0) {
+						player_btn4.setVisibility(View.GONE);
+					} else {
+						player_btn4.setVisibility(View.VISIBLE);
+					}
+
+					relativeBottom.setVisibility(View.GONE);
+					relativeBottom.startAnimation(animTopToBottom);
+					booleanClicked = false;
+					
+					//new Subscription
+					iSFavSelected = false;
+					
+					callmyStations(true);
 				}
-
-				if (curPoswheel1 == -1)
-					curPoswheel1 = 0;
-				if (curPoswheel2 == -1)
-					curPoswheel2 = 0;
-
-				if (curPoswheel1 == 0 && curPoswheel2 == 0) {
-					player_btn4.setVisibility(View.GONE);
-				} else {
-					player_btn4.setVisibility(View.VISIBLE);
-				}
-
-				relativeBottom.setVisibility(View.GONE);
-				relativeBottom.startAnimation(animTopToBottom);
-				booleanClicked = false;
-				callmyStations(true);
+				
 			}
 		});
 
@@ -529,6 +546,20 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 									Toast.LENGTH_SHORT).show();
 						}
 					}
+				}else{
+					String strMsg = "Can't add/remove this station from favorite.";
+					AlertDialog.Builder alert = new AlertDialog.Builder(
+							LifeLeadershipMainActivity.this);
+					alert.setTitle("Alert");
+					alert.setMessage(strMsg);
+					alert.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									dialog.dismiss();
+								}
+							});
+					alert.show();
 				}
 			}
 		});
@@ -720,8 +751,13 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	protected void getSpeakers() {
 		// TODO Auto-generated method stub
 
-		progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
-				null, "Loading...	", true, false);
+		if(!((LifeLeadershipMainActivity) context).isFinishing())
+		{
+		    //show dialog
+			progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
+					null, "Loading...	", true, false);
+		}
+		
 		Thread t = new Thread(new Runnable() {
 
 			@Override
@@ -928,8 +964,10 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			public void run() {
 				// TODO Auto-generated method stub
 
-				if (progressDialog.isShowing()) {
-					progressDialog.dismiss();
+				if(progressDialog!=null){
+					if (progressDialog.isShowing()) {
+						progressDialog.dismiss();
+					}
 				}
 
 				if (response != null) {
@@ -1022,9 +1060,12 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		linearAppSection4.setVisibility(View.VISIBLE);
 
 		if (flagPb) {
-			progressDialog = ProgressDialog.show(
-					LifeLeadershipMainActivity.this, null, "Loading...	", true,
-					false);
+			if(!((LifeLeadershipMainActivity) context).isFinishing())
+			{
+			    //show dialog
+				progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
+						null, "Loading...	", true, false);
+			}
 		}
 		Thread t = new Thread(new Runnable() {
 
@@ -1034,7 +1075,11 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("func", "getStation");
-				if (curPoswheel1 == -1) {
+				// new for Subscription
+				if(curPoswheel1 < -1 || curPoswheel2 < -1){
+					map.put("attrid1", ""+curPoswheel1);
+					map.put("attrid2", ""+curPoswheel2);
+				} else if (curPoswheel1 == -1) { //old
 					map.put("attrid1", "-1");
 					map.put("attrid2", "-1");
 				} else {
@@ -1062,8 +1107,10 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				if (progressDialog.isShowing()) {
-					progressDialog.dismiss();
+				if(progressDialog!=null){
+					if (progressDialog.isShowing()) {
+						progressDialog.dismiss();
+					}
 				}
 				if (response != null) {
 					try {
@@ -1117,6 +1164,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					booleanFlagFav = false;
 					for (int i = 0; i < LLApplication.getFavstationLists()
 							.size(); i++) {
+						Log.e("StationID: "+LLApplication.getStationInfo().get("StationID"), "FavStationID: "+LLApplication.getFavstationLists().get(i).get("StationID"));
 						if (LLApplication
 								.getStationInfo()
 								.get("StationID")
@@ -1125,12 +1173,15 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 												.get(i).get("StationID")))
 							booleanFlagFav = true;
 					}
-					if (booleanFlagFav)
-						player_btn4
-								.setBackgroundResource(R.drawable.favbtn_gray);
-					else
-						player_btn4
-								.setBackgroundResource(R.drawable.favbtn_red);
+					Log.e("booleanFlagFav", ""+booleanFlagFav);
+					
+					//new Subscription - replaced booleanFlagFav with (booleanFlagFav || iSFavSelected)
+					if (booleanFlagFav || iSFavSelected){
+						player_btn4.setBackgroundResource(R.drawable.favbtn_gray);
+					}						
+					else{
+						player_btn4.setBackgroundResource(R.drawable.favbtn_red);
+					}
 
 					int size = LLApplication.getStationLists().size();
 
@@ -1138,10 +1189,11 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 						if (isOnline()) {
 							currentStationPos = 0;
+							
 							startStreamingAudio(Constant.cdnPath
 									+ LLApplication.getStationLists()
 											.get(currentStationPos)
-											.get("FileName") + ".mp3");
+											.get("FileName") + ".mp3"  );
 						}
 					} else {
 						String strMsg = "I’m sorry but that station is unavailable at this time";
@@ -1175,7 +1227,15 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			}
 			audioStreamer = new StreamingMediaPlayer(this, txtCurrentTime,
 					btnPlay, streamButton, progressBar);
-			audioStreamer.startStreaming(urlstring, 5208, 216);
+			
+			if(!((LifeLeadershipMainActivity) context).isFinishing())
+			{
+			    //show dialog
+				progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
+						null, "Calculating time...	", true, false);
+			}
+			
+			audioStreamer.startStreaming(urlstring, 5208, 216, progressDialog);
 			// streamButton.setEnabled(false);
 
 			if (isOnline()) {
@@ -1210,9 +1270,14 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			}
 
 		} else {
-			progressDialog = ProgressDialog.show(
-					LifeLeadershipMainActivity.this, null, "Streaming...",
-					true, true);
+			if(!((LifeLeadershipMainActivity) context).isFinishing())
+			{
+				//show dialog
+				progressDialog = ProgressDialog.show(
+						LifeLeadershipMainActivity.this, null, "Streaming...",
+						true, true);
+			}
+			
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -1348,8 +1413,13 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	protected void likeAudio() {
 		// TODO Auto-generated method stub
 
-		progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
-				null, "Loading...	", true, false);
+		if(!((LifeLeadershipMainActivity) context).isFinishing())
+		{
+			//show dialog
+			progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
+					null, "Loading...	", true, false);
+		}
+		
 		Thread t = new Thread(new Runnable() {
 
 			@Override
@@ -1385,8 +1455,10 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			public void run() {
 				// TODO Auto-generated method stub
 
-				if (progressDialog.isShowing()) {
-					progressDialog.dismiss();
+				if(progressDialog!=null){
+					if (progressDialog.isShowing()) {
+						progressDialog.dismiss();
+					}
 				}
 
 				if (response != null) {
@@ -1404,8 +1476,12 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 	protected void addStationToFavorites() {
 		// TODO Auto-generated method stub
-		progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
-				null, "Loading...	", true, false);
+		if(!((LifeLeadershipMainActivity) context).isFinishing())
+		{
+			//show dialog
+			progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
+					null, "Loading...	", true, false);
+		}
 		Thread t = new Thread(new Runnable() {
 
 			@Override
@@ -1455,8 +1531,12 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	protected void RemoveStation(final String StationID,
 			final boolean flagList, final int childPosition) {
 		// TODO Auto-generated method stub
-		progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
-				null, "Loading...	", true, false);
+		if(!((LifeLeadershipMainActivity) context).isFinishing())
+		{
+			//show dialog
+			progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
+					null, "Loading...	", true, false);
+		}
 		Thread t = new Thread(new Runnable() {
 
 			@Override
@@ -1515,9 +1595,12 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		// TODO Auto-generated method stub
 
 		if (!flagPb) {
-			progressDialog = ProgressDialog.show(
-					LifeLeadershipMainActivity.this, null, "Loading...	", true,
-					false);
+			if(!((LifeLeadershipMainActivity) context).isFinishing())
+			{
+				//show dialog
+				progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
+						null, "Loading...	", true, false);
+			}
 		}
 		Thread t = new Thread(new Runnable() {
 
@@ -1530,6 +1613,10 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				map.put("userid", "" + LLApplication.getUserId());
 
 				response = getResponse(map);
+				
+				//temp Subscription for testing
+				//response = Constant.testJson;
+				
 				Log.i("response", "" + response);
 				Update_getFavoriteStations(flagPb);
 			}
@@ -1545,8 +1632,10 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			public void run() {
 				// TODO Auto-generated method stub
 				if (flagPb) {
-					if (progressDialog.isShowing()) {
-						progressDialog.dismiss();
+					if(progressDialog!=null){
+						if (progressDialog.isShowing()) {
+							progressDialog.dismiss();
+						}
 					}
 				}
 				if (response != null) {
@@ -1625,7 +1714,11 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				// TODO Auto-generated method stub
-				if (curPoswheel1 == -1) {
+				// new Subscription
+				if (curPoswheel1 < -1 || curPoswheel2 < -1){
+					//Don't set anything as it's already set
+				}
+				else if (curPoswheel1 == -1) { //old
 					txtStationname.setText("LIKED AUDIO");
 				} else {
 					String spkr = txtSpeakerSearch.getText().toString();
@@ -1633,7 +1726,13 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 					if (spkr.equals("SPEAKER SEARCH")
 							&& subj.equals("SUBJECT SEARCH")) {
-						txtStationname.setText("Shuffle");
+						if(iSFavSelected){
+							txtStationname.setText(LLApplication.getFavstationLists().get(selectedFavPos).get("Name"));
+						}else{
+							txtStationname.setText("Shuffle");
+						}
+						
+						
 					} else {
 						if (booleanFlagText) {
 							booleanFlagText = false;
@@ -1851,45 +1950,67 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 					relativeTop.setBackgroundColor(Color.parseColor("#D22129"));
 					linearMystations.setVisibility(View.VISIBLE);
 
+					// new for Subscription
+					curPoswheel1 = 0;
+					curPoswheel2 = 0;
+					selectedFavPos = childPosition;
+					iSFavSelected = true;
+					
 					slideMenuRight();
 
 					String id1 = LLApplication.getFavstationLists()
 							.get(childPosition).get("AttrID1");
 					String id2 = LLApplication.getFavstationLists()
 							.get(childPosition).get("AttrID2");
-
-					boolean temp = false;
-					for (int i = 0; i < arrayofspeakers.size(); i++) {
-						if (arrayofspeakers.get(i).get("AttrID").equals(id1)) {
-							curPoswheel1 = i;
-							temp = true;
-						}
-					}
-
-					// patch:
-					if (!temp) {
-						for (int i = 0; i < arrayofsubjects.size(); i++) {
-							if (arrayofsubjects.get(i).get("AttrID")
-									.equals(id1)) {
-								curPoswheel1 = 0;
-								curPoswheel2 = i;
+					
+					Log.d("selected ID1", "== "+id1);
+					Log.d("selected ID2", "== "+id2);
+					
+					//new for Subscription
+					if((id1.contains("-") || id2.contains("-")) &&
+							((Integer.parseInt(id1) < -1) || (Integer.parseInt(id2) < -1))){
+						curPoswheel1 = Integer.parseInt(id1);
+						curPoswheel2 = Integer.parseInt(id2);
+						txtStationname.setText(LLApplication.getFavstationLists()
+							.get(childPosition).get("Name"));
+						txtSpeakerSearch.setText("SPEAKER SEARCH");
+						txtSubjectSearch.setText("SUBJECT SEARCH");
+						
+					}else{ // old
+						boolean temp = false;
+						for (int i = 0; i < arrayofspeakers.size(); i++) {
+							if (arrayofspeakers.get(i).get("AttrID").equals(id1)) {
+								curPoswheel1 = i;
+								temp = true;
 							}
 						}
-					} else {
-						for (int i = 0; i < arrayofsubjects.size(); i++) {
-							if (arrayofsubjects.get(i).get("AttrID")
-									.equals(id2))
-								curPoswheel2 = i;
+
+						// patch:
+						if (!temp) {
+							for (int i = 0; i < arrayofsubjects.size(); i++) {
+								if (arrayofsubjects.get(i).get("AttrID")
+										.equals(id1)) {
+									curPoswheel1 = 0;
+									curPoswheel2 = i;
+								}
+							}
+						} else {
+							for (int i = 0; i < arrayofsubjects.size(); i++) {
+								if (arrayofsubjects.get(i).get("AttrID")
+										.equals(id2))
+									curPoswheel2 = i;
+							}
 						}
+
+						Log.i("AttrID1", "" + id1 + ".." + curPoswheel1);
+						Log.i("AttrID2", "" + id2 + ".." + curPoswheel2);
+
+						txtSpeakerSearch.setText(""
+								+ arrayofspeakers.get(curPoswheel1).get("Name"));
+						txtSubjectSearch.setText(""
+								+ arrayofsubjects.get(curPoswheel2).get("Name"));
 					}
-
-					Log.i("AttrID1", "" + id1 + ".." + curPoswheel1);
-					Log.i("AttrID2", "" + id2 + ".." + curPoswheel2);
-
-					txtSpeakerSearch.setText(""
-							+ arrayofspeakers.get(curPoswheel1).get("Name"));
-					txtSubjectSearch.setText(""
-							+ arrayofsubjects.get(curPoswheel2).get("Name"));
+					
 					callmyStations(true);
 				}
 			});
@@ -1937,7 +2058,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 				@Override
 				public void onClick(View arg0) {
 					// TODO Auto-generated method stub
-					if (groupPosition == 0) {
+					if (groupPosition == 0) { // My Stations
 						btnRadio.setVisibility(View.GONE);
 						webView.setVisibility(View.GONE);
 						webviewIdCard.setVisibility(View.GONE);
@@ -1946,7 +2067,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						linearMystations.setVisibility(View.VISIBLE);
 
 						slideMenuRight();
-					} else if (groupPosition == 1) {
+					} else if (groupPosition == 1) { // Shuffle
 						player_btn4.setVisibility(View.GONE);
 						btnRadio.setVisibility(View.GONE);
 						webView.setVisibility(View.GONE);
@@ -1959,15 +2080,21 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 						curPoswheel1 = 0;
 						curPoswheel2 = 0;
-						txtSpeakerSearch
-								.setText(""+ arrayofspeakers.get(curPoswheel1)
-												.get("Name"));
-						txtSubjectSearch
-								.setText(""+ arrayofsubjects.get(curPoswheel2)
-												.get("Name"));
-						callmyStations(true);
+						if(arrayofspeakers!=null && arrayofspeakers.size()>0){
+							Log.e("Shuffle click","==========");
+							Log.e("arrayOfSpeakers size:"+arrayofspeakers.size(), "Name : "+arrayofspeakers.get(curPoswheel1).get("Name"));
+							txtSpeakerSearch.setText(""+ arrayofspeakers.get(curPoswheel1).get("Name"));
+							txtSubjectSearch.setText(""+ arrayofsubjects.get(curPoswheel2).get("Name"));
+							//new Subscription
+							iSFavSelected = false;
 
-					} else if (groupPosition == 2) {
+							callmyStations(true);
+						}else{
+							Log.e("Shuffle click","Unable to parse arrayOfSpeakers.");
+						}
+						
+
+					} else if (groupPosition == 2) { //Liked
 						player_btn4.setVisibility(View.GONE);
 						btnRadio.setVisibility(View.GONE);
 						webView.setVisibility(View.GONE);
@@ -1980,19 +2107,24 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 						curPoswheel1 = 0;
 						curPoswheel2 = 0;
-						txtSpeakerSearch
-								.setText(""
-										+ arrayofspeakers.get(curPoswheel1)
-												.get("Name"));
-						txtSubjectSearch
-								.setText(""
-										+ arrayofsubjects.get(curPoswheel2)
-												.get("Name"));
-						curPoswheel1 = -1;
-						curPoswheel2 = -1;
-						callmyStations(true);
+						if(arrayofspeakers!=null && arrayofspeakers.size()>0){
+							txtSpeakerSearch
+							.setText(""
+									+ arrayofspeakers.get(curPoswheel1)
+									.get("Name"));
+							txtSubjectSearch
+							.setText(""
+									+ arrayofsubjects.get(curPoswheel2)
+									.get("Name"));
+							//new Subscription
+							iSFavSelected = false;
 
-					} else if (groupPosition == 3) {
+							curPoswheel1 = -1;
+							curPoswheel2 = -1;
+							callmyStations(true);
+						}
+
+					} else if (groupPosition == 3) { //Help
 						btnRadio.setVisibility(View.VISIBLE);
 						linearMystations.setVisibility(View.GONE);
 						webView.setVisibility(View.VISIBLE);
@@ -2002,7 +2134,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						webView.loadUrl("file:///android_res/raw/help.html");
 
 						slideMenuRight();
-					} else if (groupPosition == 4) {
+					} else if (groupPosition == 4) { //Terms
 						btnRadio.setVisibility(View.VISIBLE);
 						linearMystations.setVisibility(View.GONE);
 						webView.setVisibility(View.VISIBLE);
@@ -2012,7 +2144,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						webView.loadUrl("file:///android_res/raw/terms.html");
 
 						slideMenuRight();
-					} else if (groupPosition == 5) {
+					} else if (groupPosition == 5) { // Privacy
 						btnRadio.setVisibility(View.VISIBLE);
 						linearMystations.setVisibility(View.GONE);
 						webView.setVisibility(View.VISIBLE);
@@ -2022,7 +2154,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						webView.loadUrl("file:///android_res/raw/privacy.html");
 
 						slideMenuRight();
-					} else if (groupPosition == 6) {
+					} else if (groupPosition == 6) { //ID Card
 
 						btnRadio.setVisibility(View.VISIBLE);
 						linearMystations.setVisibility(View.GONE);
@@ -2033,7 +2165,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 								.parseColor("#B8B8B8"));
 						
 						slideMenuRight();
-					} else if (groupPosition == 7) {
+					} else if (groupPosition == 7) { //Contact
 
 						Intent emailIntent = new Intent(
 								android.content.Intent.ACTION_SEND);
@@ -2049,7 +2181,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 						startActivity(Intent.createChooser(emailIntent,
 								"Email:"));
 
-					} else if (groupPosition == 8) {
+					} else if (groupPosition == 8) { //Logout
 						AlertDialog.Builder alert = new AlertDialog.Builder(
 								mContext);
 						alert.setTitle(Constant.Alert_Name);
@@ -2074,7 +2206,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 										values.put("remember", ""
 												+ LLApplication.getRemember());
 										values.put("userloggedin", "0");
-										SplashActivity.db.update("user", values, "pk=1", null);
+										Constant.db.update("user", values, "pk=1", null);
 
 										android.os.Handler hn = new android.os.Handler();
 										hn.postDelayed(new Runnable() {
@@ -2226,7 +2358,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			values.put("UserID", "" + LLApplication.getUserId());
 			values.put("remember", "" + LLApplication.getRemember());
 			values.put("userloggedin", "0");
-			SplashActivity.db.update("user", values, "pk=1", null);
+			Constant.db.update("user", values, "pk=1", null);
 
 			android.os.Handler hn = new android.os.Handler();
 			hn.postDelayed(new Runnable() {
@@ -2251,6 +2383,13 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		}
 		if(mgr != null) {
 		    mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+		}
+		
+		if(progressDialog!=null){
+			if(progressDialog.isShowing()){
+				progressDialog.dismiss();
+			}
+			progressDialog = null;
 		}
 	}
 

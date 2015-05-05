@@ -27,6 +27,7 @@ import android.widget.ToggleButton;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.rmrdevelopment.lifeleadership.LLApplication;
 import com.rmrdevelopment.lifeleadership.R;
+import com.rmrdevelopment.lifeleadership.SQLiteHelper;
 import com.rmrdevelopment.lifeleadership.util.Constant;
 
 public class LoginActivity extends BaseActivity {
@@ -162,25 +163,32 @@ public class LoginActivity extends BaseActivity {
 
 	protected void login_check_event(final String em, final String pwd) {
 		// TODO Auto-generated method stub
-		progressDialog = ProgressDialog.show(LoginActivity.this, null,
-				"Loading...	", true, false);
-		Thread t = new Thread(new Runnable() {
+		try {
+			progressDialog = ProgressDialog.show(LoginActivity.this, null,
+					"Loading...	", true, false);
+			Thread t = new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
 
-				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("func", "accountAuthentication");
-				map.put("username", "" + em);
-				map.put("password", "" + pwd);
+					HashMap<String, String> map = new HashMap<String, String>();
+					map.put("func", "accountAuthentication");
+					map.put("username", "" + em);
+					map.put("password", "" + pwd);
 
-				response = getResponse(map);
-				Log.i("response", "" + response);
-				Update();
-			}
-		});
-		t.start();
+					response = getResponse(map);
+					Log.i("response", "" + response);
+					Update();
+				}
+			});
+			t.start();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	private void Update() {
@@ -202,7 +210,7 @@ public class LoginActivity extends BaseActivity {
 								AuthenticateUserKey(""
 										+ json_str.getString("Guid"));
 							} else {
-								if (progressDialog.isShowing()) {
+								if (progressDialog!=null && progressDialog.isShowing()) {
 									progressDialog.dismiss();
 								}
 								Toast.makeText(getApplicationContext(),
@@ -210,7 +218,7 @@ public class LoginActivity extends BaseActivity {
 										Toast.LENGTH_SHORT).show();
 							}
 						} else {
-							if (progressDialog.isShowing()) {
+							if (progressDialog!=null && progressDialog.isShowing()) {
 								progressDialog.dismiss();
 							}
 							Toast.makeText(getApplicationContext(),
@@ -289,8 +297,17 @@ public class LoginActivity extends BaseActivity {
 						values.put("remember", "" + LLApplication.getRemember());
 						values.put("userloggedin",
 								"" + LLApplication.getUserloggedin());
-						SplashActivity.db.update("user", values, "pk=1", null);
+						if(Constant.db == null){ //new 
+							SQLiteHelper helper = new SQLiteHelper(LoginActivity.this, "lifeleadership.sqlite");
+							helper.createDatabase();
+							Constant.db = helper.openDatabase();
+						}
+						Constant.db.update("user", values, "pk=1", null);
 
+						if (progressDialog!=null && progressDialog.isShowing()) {
+							progressDialog.dismiss();
+						}
+						
 						Intent intent = new Intent(LoginActivity.this,
 								LifeLeadershipMainActivity.class);
 						startActivity(intent);

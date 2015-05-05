@@ -10,9 +10,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import wseemann.media.FFmpegMediaMetadataRetriever;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -21,6 +25,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rmrdevelopment.lifeleadership.LLApplication;
 import com.rmrdevelopment.lifeleadership.R;
@@ -70,7 +75,7 @@ public class StreamingMediaPlayer {
 	 * MediaPlayer as new content becomes available.
 	 */
 	public void startStreaming(final String mediaUrl, long mediaLengthInKb,
-			long mediaLengthInSeconds) throws IOException {
+			long mediaLengthInSeconds, final ProgressDialog pDialog) throws IOException {
 
 		this.mediaLengthInKb = mediaLengthInKb;
 		this.mediaLengthInSeconds = mediaLengthInSeconds;
@@ -79,7 +84,7 @@ public class StreamingMediaPlayer {
 			public void run() {
 				try {
 					if (mediaUrl != null && mediaUrl.length() != 0) {
-						downloadAudioIncrement(mediaUrl);
+						downloadAudioIncrement(mediaUrl, pDialog);
 					}
 				} catch (IOException e) {
 					Log.e(getClass().getName(),
@@ -97,7 +102,7 @@ public class StreamingMediaPlayer {
 	 * setDataSource for that local file
 	 */
 	@SuppressLint("NewApi")
-	public void downloadAudioIncrement(String mediaUrl) throws IOException {
+	public void downloadAudioIncrement(String mediaUrl, ProgressDialog pDialog) throws IOException {
 
 		// ****** get Total Time ************************//
 		FFmpegMediaMetadataRetriever retriever = new FFmpegMediaMetadataRetriever();
@@ -113,6 +118,13 @@ public class StreamingMediaPlayer {
 			} catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();
+				if(pDialog!=null) {
+				    //show dialog
+					if(pDialog.isShowing()){
+						//pDialog.setMessage("Failed!, Try again...");
+						pDialog.dismiss();
+					}
+				}
 			}
 		}			
 		else{
@@ -121,6 +133,14 @@ public class StreamingMediaPlayer {
 			}catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();
+				if(pDialog!=null) {
+				    //show dialog
+					if(pDialog.isShowing()){
+						//pDialog.setMessage("Failed!, Try again...");
+						pDialog.dismiss();
+					}
+				}
+				
 			}
 		}
 			
@@ -135,14 +155,19 @@ public class StreamingMediaPlayer {
 			long seconds = duration - (hours * 3600 + minutes * 60);
 
 			progressBar.setMax((int) duration);
-			if (hours > 0)
-				LLApplication.setTotalTime(String.format("%02d", hours) + ":"
-						+ String.format("%02d", minutes) + ":"
-						+ String.format("%02d", seconds));
-			else
-				LLApplication.setTotalTime(String.format("%02d", minutes) + ":"
-						+ String.format("%02d", seconds));
+			if (hours > 0){
+				LLApplication.setTotalTime(String.format("%02d", hours) + ":" + String.format("%02d", minutes) + ":"	+ String.format("%02d", seconds));
+			} else {
+				LLApplication.setTotalTime(String.format("%02d", minutes) + ":"+ String.format("%02d", seconds)); 
+			}
 			// ****************************************** //
+			
+			if(pDialog!=null) {
+			    //show dialog
+				if(pDialog.isShowing()){
+					pDialog.dismiss();
+				}
+			}
 
 			URLConnection cn = new URL(mediaUrl).openConnection();
 			cn.connect();
