@@ -15,7 +15,7 @@ public class Constant {
 	public static final String forgotPass_Link = "http://www.life-leadership-home.com/en-us/accountrecovery.aspx";	
 	public static String network_error="please check your network connectivity.";
 	
-	public static SQLiteDatabase db= null;
+	//public static SQLiteDatabase db= null;
 	
 	//dev Site
 	//public static String idCardUrl = "http://life.rmrdevelopment.com/DesktopModules/Life_IDCard/Card.aspx?";

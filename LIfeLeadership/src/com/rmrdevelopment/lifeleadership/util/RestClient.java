@@ -47,7 +47,7 @@ public class RestClient {
 	 * rest service and prints it's response to Android Log with
 	 * labels "Praeda".
 	 */
-	public static void connect(String url)
+	/*public static void connect(String url)
 	{
 
 		HttpClient httpclient = new DefaultHttpClient();
@@ -80,11 +80,7 @@ public class RestClient {
 				JSONArray nameArray=json.names();
 				@SuppressWarnings("unused")
 				JSONArray valArray=json.toJSONArray(nameArray);
-				/*for(int i=0;i<valArray.length();i++)
-            {
-                Log.i("Praeda","<jsonname"+i+">\n"+nameArray.getString(i)+"\n</jsonname"+i+">\n"
-                        +"<jsonvalue"+i+">\n"+valArray.getString(i)+"\n</jsonvalue"+i+">");
-            }*/
+				
 
 				// A Simple JSONObject Value Pushing
 				json.put("sample key", "sample value");
@@ -104,5 +100,5 @@ public class RestClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 }

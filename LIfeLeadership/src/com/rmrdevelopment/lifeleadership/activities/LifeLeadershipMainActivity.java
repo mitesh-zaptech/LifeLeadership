@@ -17,6 +17,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -62,6 +63,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.rmrdevelopment.lifeleadership.LLApplication;
 import com.rmrdevelopment.lifeleadership.R;
+import com.rmrdevelopment.lifeleadership.SQLiteHelper;
 import com.rmrdevelopment.lifeleadership.slider.HorizontalSideScrollView;
 import com.rmrdevelopment.lifeleadership.slider.HorizontalSideScrollView.SizeCallback;
 import com.rmrdevelopment.lifeleadership.util.Constant;
@@ -166,6 +168,9 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	//Telephony Manager:
 	private TelephonyManager mgr ;
 
+	private SQLiteHelper helper;
+	private SQLiteDatabase db= null;
+	
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
@@ -217,6 +222,13 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		typeFace1 = Typeface.createFromAsset(getAssets(), "dsdigi.ttf");
 		typeFace2 = Typeface.createFromAsset(getAssets(),
 				"librebaskervilleItalic.ttf");
+		
+		//new
+		helper = new SQLiteHelper(this, "lifeleadership.sqlite");
+		helper.createDatabase();
+		db = helper.openDatabase();
+		//
+		
 
 		init();
 		onClickEvents();
@@ -2206,7 +2218,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 										values.put("remember", ""
 												+ LLApplication.getRemember());
 										values.put("userloggedin", "0");
-										Constant.db.update("user", values, "pk=1", null);
+										db.update("user", values, "pk=1", null);
 
 										android.os.Handler hn = new android.os.Handler();
 										hn.postDelayed(new Runnable() {
@@ -2358,7 +2370,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			values.put("UserID", "" + LLApplication.getUserId());
 			values.put("remember", "" + LLApplication.getRemember());
 			values.put("userloggedin", "0");
-			Constant.db.update("user", values, "pk=1", null);
+			db.update("user", values, "pk=1", null);
 
 			android.os.Handler hn = new android.os.Handler();
 			hn.postDelayed(new Runnable() {
@@ -2378,6 +2390,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
+		helper.close();
 		if (audioStreamer != null) {
 			audioStreamer.interrupt();
 		}

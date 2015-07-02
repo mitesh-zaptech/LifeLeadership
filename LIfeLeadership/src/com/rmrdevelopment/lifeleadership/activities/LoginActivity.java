@@ -9,8 +9,10 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.provider.SyncStateContract.Helpers;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -174,11 +176,10 @@ public class LoginActivity extends BaseActivity {
 
 					HashMap<String, String> map = new HashMap<String, String>();
 					map.put("func", "accountAuthentication");
-					map.put("username", "" + em);
+					map.put("username", "" + em.trim());
 					map.put("password", "" + pwd);
 
 					response = getResponse(map);
-					Log.i("response", "" + response);
 					Update();
 				}
 			});
@@ -187,8 +188,6 @@ public class LoginActivity extends BaseActivity {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		
-		
 	}
 
 	private void Update() {
@@ -249,10 +248,10 @@ public class LoginActivity extends BaseActivity {
 
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("func", "authenicateKey");
-				map.put("key", "" + key);
-
+				map.put("key", ""+ key);
+				Log.i("Request AuthenticateUserKey", "" + map);
 				response = getResponse(map);
-				Log.i("response", "" + response);
+				Log.i("response AuthenticateUserKey", "" + response);
 				UpdateAuthenticateUserKey();
 			}
 		});
@@ -297,13 +296,15 @@ public class LoginActivity extends BaseActivity {
 						values.put("remember", "" + LLApplication.getRemember());
 						values.put("userloggedin",
 								"" + LLApplication.getUserloggedin());
-						if(Constant.db == null){ //new 
-							SQLiteHelper helper = new SQLiteHelper(LoginActivity.this, "lifeleadership.sqlite");
-							helper.createDatabase();
-							Constant.db = helper.openDatabase();
-						}
-						Constant.db.update("user", values, "pk=1", null);
-
+						/*if(Constant.db == null){ //new 
+							
+						}*/
+						SQLiteHelper helper = new SQLiteHelper(LoginActivity.this, "lifeleadership.sqlite");
+						helper.createDatabase();
+						SQLiteDatabase db = helper.openDatabase();
+						db.update("user", values, "pk=1", null);
+						helper.close();
+						
 						if (progressDialog!=null && progressDialog.isShowing()) {
 							progressDialog.dismiss();
 						}
@@ -347,7 +348,7 @@ public class LoginActivity extends BaseActivity {
 		return true;
 
 	}
-
+	
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
