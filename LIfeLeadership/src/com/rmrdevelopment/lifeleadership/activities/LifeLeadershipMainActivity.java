@@ -21,6 +21,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.PhoneStateListener;
@@ -170,6 +171,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 	private SQLiteHelper helper;
 	private SQLiteDatabase db= null;
+	
+	private boolean isInitial = true;
 	
 	@Override
 	protected void onResume() {
@@ -1038,12 +1041,120 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				progressDialog.dismiss();
+				if(progressDialog!=null){
+					if(progressDialog.isShowing()){
+						progressDialog.dismiss();
+					}
+				}
 				startAudio();
 			}
 		});
 	}
 
+	public void getFavoriteStations(final boolean flagPb) {
+		// TODO Auto-generated method stub
+
+		if (!flagPb) {
+			if(!((LifeLeadershipMainActivity) context).isFinishing())
+			{
+				//show dialog
+				progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
+						null, "Loading...	", true, false);
+			}
+		}
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("func", "getFavs");
+				map.put("userid", "" + LLApplication.getUserId());
+
+				response = getResponse(map);
+				
+				//temp Subscription for testing
+				//response = Constant.testJson;
+				
+				Log.i("response", "" + response);
+				Update_getFavoriteStations(flagPb);
+			}
+		});
+		t.start();
+	}
+
+	private void Update_getFavoriteStations(final boolean flagPb) {
+		// TODO Auto-generated method stub
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				if (flagPb) {
+					if(progressDialog!=null){
+						if (progressDialog.isShowing()) {
+							progressDialog.dismiss();
+						}
+					}
+				}
+				if (response != null) {
+					try {
+						json_str = new JSONObject(response);
+						data_array = json_str.getString("stations");
+						array = new JSONArray(data_array);
+					} catch (JSONException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					LLApplication.getFavstationLists().clear();
+					for (int i = 0; i < array.length(); i++) {
+						JSONObject obj;
+						try {
+							obj = array.getJSONObject(i);
+							HashMap<String, String> map = new HashMap<String, String>();
+
+							map.put("UserID", "" + obj.getString("UserID"));
+							map.put("Name", "" + obj.getString("Name"));
+							map.put("StationID",
+									"" + obj.getString("StationID"));
+							map.put("AttrID1", "" + obj.getString("AttrID1"));
+							map.put("AttrID2", "" + obj.getString("AttrID2"));
+							map.put("LastPlayed",
+									"" + obj.getString("LastPlayed"));
+							map.put("Deleted", "" + obj.getString("Deleted"));
+							map.put("PlayCount",
+									"" + obj.getString("PlayCount"));
+
+							LLApplication.getFavstationLists().add(map);
+
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					prepareListData();
+					if (!flagPb){
+						if (isInitial) {
+							if(progressDialog!=null){
+								if(progressDialog.isShowing()){
+									progressDialog.dismiss();
+								}
+								progressDialog = null;
+							}
+							callShuffle();
+							isInitial = false;
+						}else{
+							callmyStations(false);
+						}
+					}
+						
+				}
+			}
+		});
+	}
 	
 	private void callmyStations(final boolean flagPb) {
 		// TODO Auto-generated method stub
@@ -1228,6 +1339,8 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 	}
 
 	private void startStreamingAudio(String urlstring) {
+		Log.i("StartStreamingAudio", "==>"+urlstring);
+		
 		try {
 			Button streamButton = new Button(getApplicationContext());
 			progressBar = (ProgressBar) applicationView
@@ -1258,6 +1371,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			Log.e(getClass().getName(), "Error starting to stream audio.", e);
 		}
 	}
@@ -1603,97 +1717,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		});
 	}
 
-	public void getFavoriteStations(final boolean flagPb) {
-		// TODO Auto-generated method stub
-
-		if (!flagPb) {
-			if(!((LifeLeadershipMainActivity) context).isFinishing())
-			{
-				//show dialog
-				progressDialog = ProgressDialog.show(LifeLeadershipMainActivity.this,
-						null, "Loading...	", true, false);
-			}
-		}
-		Thread t = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-
-				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("func", "getFavs");
-				map.put("userid", "" + LLApplication.getUserId());
-
-				response = getResponse(map);
-				
-				//temp Subscription for testing
-				//response = Constant.testJson;
-				
-				Log.i("response", "" + response);
-				Update_getFavoriteStations(flagPb);
-			}
-		});
-		t.start();
-	}
-
-	private void Update_getFavoriteStations(final boolean flagPb) {
-		// TODO Auto-generated method stub
-		this.runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				if (flagPb) {
-					if(progressDialog!=null){
-						if (progressDialog.isShowing()) {
-							progressDialog.dismiss();
-						}
-					}
-				}
-				if (response != null) {
-					try {
-						json_str = new JSONObject(response);
-						data_array = json_str.getString("stations");
-						array = new JSONArray(data_array);
-					} catch (JSONException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-					LLApplication.getFavstationLists().clear();
-					for (int i = 0; i < array.length(); i++) {
-						JSONObject obj;
-						try {
-							obj = array.getJSONObject(i);
-							HashMap<String, String> map = new HashMap<String, String>();
-
-							map.put("UserID", "" + obj.getString("UserID"));
-							map.put("Name", "" + obj.getString("Name"));
-							map.put("StationID",
-									"" + obj.getString("StationID"));
-							map.put("AttrID1", "" + obj.getString("AttrID1"));
-							map.put("AttrID2", "" + obj.getString("AttrID2"));
-							map.put("LastPlayed",
-									"" + obj.getString("LastPlayed"));
-							map.put("Deleted", "" + obj.getString("Deleted"));
-							map.put("PlayCount",
-									"" + obj.getString("PlayCount"));
-
-							LLApplication.getFavstationLists().add(map);
-
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-
-					prepareListData();
-					if (!flagPb)
-						callmyStations(false);
-				}
-			}
-		});
-	}
+	
 
 	protected void CallAsynchronous() {
 		// TODO Auto-generated method stub
@@ -2090,20 +2114,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 						slideMenuRight();
 
-						curPoswheel1 = 0;
-						curPoswheel2 = 0;
-						if(arrayofspeakers!=null && arrayofspeakers.size()>0){
-							Log.e("Shuffle click","==========");
-							Log.e("arrayOfSpeakers size:"+arrayofspeakers.size(), "Name : "+arrayofspeakers.get(curPoswheel1).get("Name"));
-							txtSpeakerSearch.setText(""+ arrayofspeakers.get(curPoswheel1).get("Name"));
-							txtSubjectSearch.setText(""+ arrayofsubjects.get(curPoswheel2).get("Name"));
-							//new Subscription
-							iSFavSelected = false;
-
-							callmyStations(true);
-						}else{
-							Log.e("Shuffle click","Unable to parse arrayOfSpeakers.");
-						}
+						callShuffle();
 						
 
 					} else if (groupPosition == 2) { //Liked
@@ -2274,6 +2285,22 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 
 	}
 
+	private void callShuffle(){
+		curPoswheel1 = 0;
+		curPoswheel2 = 0;
+		if(arrayofspeakers!=null && arrayofspeakers.size()>0){
+			Log.e("Shuffle click","==========");
+			Log.e("arrayOfSpeakers size:"+arrayofspeakers.size(), "Name : "+arrayofspeakers.get(curPoswheel1).get("Name"));
+			txtSpeakerSearch.setText(""+ arrayofspeakers.get(curPoswheel1).get("Name"));
+			txtSubjectSearch.setText(""+ arrayofsubjects.get(curPoswheel2).get("Name"));
+			//new Subscription
+			iSFavSelected = false;
+			callmyStations(true);
+		}else{
+			Log.e("Shuffle click","Unable to parse arrayOfSpeakers.");
+		}
+	}
+	
 	private void prepareListData() {
 		listDataHeader = new ArrayList<String>();
 		mapDataChild = new HashMap<String, ArrayList<HashMap<String, String>>>();
@@ -2325,7 +2352,7 @@ public class LifeLeadershipMainActivity extends BaseActivity implements
 		// if (booleanFlagExpand)
 		expListView.expandGroup(2);
 	}
-
+	
 	private class Wheel1Adapter extends AbstractWheelTextAdapter {
 		// Countries names
 		private ArrayList<HashMap<String, String>> list;

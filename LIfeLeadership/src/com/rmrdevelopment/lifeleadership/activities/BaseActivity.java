@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -207,14 +210,31 @@ public class BaseActivity extends Activity{
 		Log.d("Request Param", "== "+map);
 
 		String URL = Constant.appPath;
+		String params = "";
 		List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
 		for (Map.Entry<String, String> mapp : map.entrySet()) {
 			String key = mapp.getKey();
 			String value = mapp.getValue();
 			postParameters.add(new BasicNameValuePair(key,value));
-			URL = URL.concat("&"+key+"="+value);
+			if(key.equalsIgnoreCase("password") || key.equalsIgnoreCase("username")){
+				value = Uri.encode(value, "UTF-8");
+			}
+			params = params.concat("&"+key+"="+value);
 		}
-
+		try {
+			//String ALLOWED_URI_CHARS = "$@#&=*+-_.,:!?()/~'%^";
+			//params = Uri.encode(params, ALLOWED_URI_CHARS);
+			
+			//params = Uri.encode(params, "UTF-8");
+			URL = URL.concat(params);
+			//URL = URLEncoder.encode(URL, "UTF-8");
+			Log.d("URL", ""+URL);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
 		String strresponse = "";
 		BufferedReader bufferedReader = null;
 

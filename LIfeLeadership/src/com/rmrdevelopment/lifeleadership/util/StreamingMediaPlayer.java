@@ -60,6 +60,8 @@ public class StreamingMediaPlayer {
 	private Context context;
 
 	private int counter = 0;
+	
+	private boolean isFirstTime= true;
 
 	public StreamingMediaPlayer(Context context, TextView textStreamed,
 			Button playButton, Button streamButton, ProgressBar progressBar) {
@@ -104,6 +106,7 @@ public class StreamingMediaPlayer {
 	@SuppressLint("NewApi")
 	public void downloadAudioIncrement(String mediaUrl, ProgressDialog pDialog) throws IOException {
 
+		isFirstTime = true;
 		// ****** get Total Time ************************//
 		FFmpegMediaMetadataRetriever retriever = new FFmpegMediaMetadataRetriever();
 		//MediaMetadataRetriever retriever = new MediaMetadataRetriever();
@@ -121,10 +124,10 @@ public class StreamingMediaPlayer {
 				if(pDialog!=null) {
 				    //show dialog
 					if(pDialog.isShowing()){
-						//pDialog.setMessage("Failed!, Try again...");
 						pDialog.dismiss();
 					}
 				}
+				
 			}
 		}			
 		else{
@@ -136,7 +139,6 @@ public class StreamingMediaPlayer {
 				if(pDialog!=null) {
 				    //show dialog
 					if(pDialog.isShowing()){
-						//pDialog.setMessage("Failed!, Try again...");
 						pDialog.dismiss();
 					}
 				}
@@ -211,6 +213,25 @@ public class StreamingMediaPlayer {
 			stream.close();
 			if (validateNotInterrupted()) {
 				fireDataFullyLoaded();
+			}
+		}
+		
+	}
+	
+	private void reCalculate(final ProgressDialog pDialog){
+		if(pDialog!=null) {
+		    //show dialog
+			if(pDialog.isShowing()){
+				((Activity)context).runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						pDialog.setMessage("Trying again...");
+					}
+				});
+				
+		//		pDialog.dismiss();
 			}
 		}
 		
